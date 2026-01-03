@@ -11,12 +11,28 @@ const experiences = [
     type: "internship",
   },
   {
+    period: "2024 - Present",
+    title: "Disability Inclusion Advocate",
+    company: "Community Impact Initiative",
+    description:
+      "Championing accessibility in technology and education. Leading campaigns to ensure digital products and educational resources are accessible to persons with disabilities.",
+    type: "advocacy",
+  },
+  {
     period: "2023 - 2024",
     title: "Millennium Fellow",
-    company: "Millennium Fellowship Program",
+    company: "United Nations Academic Impact",
     description:
-      "Selected among top youth leaders globally. Led initiatives focused on sustainable development goals and community impact.",
+      "Selected among top youth leaders globally. Led initiatives focused on sustainable development goals, disability inclusion, and community impact through technology.",
     type: "fellowship",
+  },
+  {
+    period: "2023 - Present",
+    title: "Youth Leadership & Advocacy",
+    company: "Various Organizations",
+    description:
+      "Mentoring young technologists, organizing tech workshops, and advocating for inclusive policies in education and technology sectors.",
+    type: "leadership",
   },
   {
     period: "2022 - Present",
@@ -41,6 +57,8 @@ const typeStyles = {
   fellowship: "bg-amber-500/10 text-amber-400 border-amber-500/20",
   entrepreneurship: "bg-green-500/10 text-green-400 border-green-500/20",
   education: "bg-purple-500/10 text-purple-400 border-purple-500/20",
+  advocacy: "bg-pink-500/10 text-pink-400 border-pink-500/20",
+  leadership: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20",
 };
 
 export const Experience = () => {

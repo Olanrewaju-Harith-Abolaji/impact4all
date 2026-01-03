@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { GraduationCap, Briefcase, Award, Users } from "lucide-react";
+import { GraduationCap, Briefcase, Award, Users, Heart, Lightbulb } from "lucide-react";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 
 const highlights = [
@@ -19,7 +19,17 @@ const highlights = [
     description: "Recognized for leadership in sustainable development",
   },
   {
+    icon: Heart,
+    title: "Inclusion Advocate",
+    description: "Championing disability inclusion and accessibility in tech",
+  },
+  {
     icon: Users,
+    title: "Youth Leader",
+    description: "Mentoring and empowering the next generation of technologists",
+  },
+  {
+    icon: Lightbulb,
     title: "Entrepreneur",
     description: "Founder of Kekecruise - Bicycle Rental Management System",
   },
@@ -55,9 +65,14 @@ export const About = () => {
               serve humanity, which drives my work in creating impactful solutions.
             </p>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              Beyond code, I'm passionate about leadership and community development. As a 
-              Millennium Fellow and founder of Kekecruise, I've learned that sustainable 
-              impact comes from combining technical skills with a vision for positive change.
+              I'm deeply committed to <span className="text-primary font-semibold">disability inclusion</span> and 
+              ensuring technology is accessible to everyone. As an advocate, I work to break barriers 
+              and create opportunities for persons with disabilities in tech and education.
+            </p>
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              Beyond code, I'm passionate about <span className="text-primary font-semibold">youth leadership</span> and 
+              community development. As a Millennium Fellow and founder of Kekecruise, I've learned that 
+              sustainable impact comes from combining technical skills with inclusive vision for positive change.
             </p>
 
             {/* Quick stats */}

@@ -1,8 +1,16 @@
 import { motion } from "framer-motion";
-import { ArrowDown, Download, ExternalLink, Github, Linkedin, Twitter } from "lucide-react";
+import { ArrowDown, Download, Github, Linkedin, Twitter, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTypingEffect } from "@/hooks/useTypingEffect";
 
 export const Hero = () => {
+  const typingText = useTypingEffect(
+    ["AI & Data Science", "Disability Inclusion", "Youth Leadership", "Social Impact"],
+    80,
+    40,
+    2500
+  );
+
   const scrollToProjects = () => {
     document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" });
   };
@@ -12,6 +20,7 @@ export const Hero = () => {
       {/* Background gradient orbs */}
       <div className="absolute top-1/4 -left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-float" />
       <div className="absolute bottom-1/4 -right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float" style={{ animationDelay: "1.5s" }} />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
       
       {/* Grid pattern overlay */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--border)/0.3)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border)/0.3)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_110%)]" />
@@ -35,16 +44,35 @@ export const Hero = () => {
               Open to Opportunities
             </motion.div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold font-display leading-tight mb-6">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold font-display leading-tight mb-4">
               Building{" "}
               <span className="text-gradient">Intelligent Solutions</span>
               <br />
               with Code, Data & Impact
             </h1>
 
-            <p className="text-lg lg:text-xl text-muted-foreground max-w-xl mb-8">
+            {/* Typing effect */}
+            <div className="h-10 mb-6 flex items-center justify-center lg:justify-start">
+              <span className="text-xl lg:text-2xl text-primary font-semibold">
+                {typingText}
+                <span className="animate-pulse">|</span>
+              </span>
+            </div>
+
+            <p className="text-lg lg:text-xl text-muted-foreground max-w-xl mb-4">
               Final-year IT student & aspiring AI/Data Scientist. Passionate about leveraging technology for social impact and innovation.
             </p>
+            
+            {/* Advocacy highlight */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-pink-500/10 border border-pink-500/20 rounded-full text-pink-400 text-sm font-medium mb-8"
+            >
+              <Heart className="w-4 h-4" />
+              Disability Inclusion Advocate
+            </motion.div>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8">
               <Button

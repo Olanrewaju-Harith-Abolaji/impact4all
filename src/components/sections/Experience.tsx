@@ -4,6 +4,22 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 const experiences = [
   {
     period: "2024 - Present",
+    title: "Founder & Project Manager",
+    company: "AccessEd Africa",
+    description:
+      "Founded an NGO bridging the digital gap for students with disabilities. Leading the development of accessible software with screen readers, targeting 50,000+ students across Africa.",
+    type: "management",
+  },
+  {
+    period: "2024 - Present",
+    title: "Co-Founder",
+    company: "TechNexus",
+    description:
+      "Co-founded a digital empowerment initiative providing tech education, mentorship, and resources to underserved youth. Empowering 1,000+ young people in the digital economy.",
+    type: "management",
+  },
+  {
+    period: "2024 - Present",
     title: "AI & Robotics Intern",
     company: "National Centre for AI & Robotics",
     description:
@@ -59,6 +75,7 @@ const typeStyles = {
   education: "bg-purple-500/10 text-purple-400 border-purple-500/20",
   advocacy: "bg-pink-500/10 text-pink-400 border-pink-500/20",
   leadership: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20",
+  management: "bg-teal-500/10 text-teal-400 border-teal-500/20",
 };
 
 export const Experience = () => {

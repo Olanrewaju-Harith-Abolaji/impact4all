@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowDown, Download, Github, Linkedin, Twitter, Heart } from "lucide-react";
+import { ArrowDown, Download, Github, Linkedin, Twitter, Heart, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTypingEffect } from "@/hooks/useTypingEffect";
 
@@ -77,8 +77,17 @@ export const Hero = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8">
               <Button
                 size="lg"
-                onClick={scrollToProjects}
+                onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
                 className="group bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 glow-effect"
+              >
+                <Calendar className="mr-2 w-4 h-4" />
+                Let's Connect
+              </Button>
+              <Button
+                size="lg"
+                onClick={scrollToProjects}
+                variant="outline"
+                className="border-border hover:bg-secondary group"
               >
                 View Projects
                 <ArrowDown className="ml-2 w-4 h-4 group-hover:translate-y-1 transition-transform" />

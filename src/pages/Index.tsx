@@ -20,11 +20,11 @@ const Index = () => {
       <Navbar />
       <main className="relative z-10">
         <Hero />
+        <FeaturedInitiatives />
+        <Experience />
         <About />
         <Skills />
         <Projects />
-        <FeaturedInitiatives />
-        <Experience />
         <Advocacy />
         <Certifications />
         <Testimonials />

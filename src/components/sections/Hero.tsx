@@ -5,7 +5,7 @@ import { useTypingEffect } from "@/hooks/useTypingEffect";
 
 export const Hero = () => {
   const typingText = useTypingEffect(
-    ["AI & Data Science", "Disability Inclusion", "Youth Leadership", "Social Impact"],
+    ["SDG Advocate", "Project Manager", "Volunteer Leader", "Youth Changemaker"],
     80,
     40,
     2500
@@ -45,10 +45,10 @@ export const Hero = () => {
             </motion.div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold font-display leading-tight mb-4">
-              Building{" "}
-              <span className="text-gradient">Intelligent Solutions</span>
+              Driving{" "}
+              <span className="text-gradient">Sustainable Change</span>
               <br />
-              with Code, Data & Impact
+              Through Leadership & Service
             </h1>
 
             {/* Typing effect */}
@@ -60,7 +60,7 @@ export const Hero = () => {
             </div>
 
             <p className="text-lg lg:text-xl text-muted-foreground max-w-xl mb-4">
-              Final-year IT student & aspiring AI/Data Scientist. Passionate about leveraging technology for social impact and innovation.
+              SDG Champion, Project Manager & Volunteer Leader. Empowering communities through technology, inclusion, and sustainable development initiatives.
             </p>
             
             {/* Advocacy highlight */}

@@ -3,7 +3,7 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 
 const experiences = [
   {
-    period: "2024 - Present",
+    period: "2025 - Present",
     title: "Founder & Project Manager",
     company: "AccessEd Africa",
     description:
@@ -19,9 +19,9 @@ const experiences = [
     type: "management",
   },
   {
-    period: "2024 - Present",
+    period: "2024",
     title: "AI & Robotics Intern",
-    company: "National Centre for AI & Robotics",
+    company: "National Centre for Artificial Intelligence and Robotics",
     description:
       "Working on cutting-edge AI projects and learning from industry experts in artificial intelligence and robotics development.",
     type: "internship",
@@ -35,7 +35,7 @@ const experiences = [
     type: "advocacy",
   },
   {
-    period: "2023 - 2024",
+    period: "2025",
     title: "Millennium Fellow",
     company: "United Nations Academic Impact",
     description:
@@ -43,27 +43,25 @@ const experiences = [
     type: "fellowship",
   },
   {
-    period: "2023 - Present",
     title: "Youth Leadership & Advocacy",
     company: "Various Organizations",
     description:
-      "Mentoring young technologists, organizing tech workshops, and advocating for inclusive policies in education and technology sectors.",
+      "Serving as a Millennium Fellow and Aspire Institute Fellow to drive social change. I focus on mentoring young technologists and advocating for inclusive policies that bridge the digital gap for students with disabilities.",
     type: "leadership",
   },
   {
-    period: "2022 - Present",
-    title: "Founder & Lead Developer",
+    title: "Co-Founder",
     company: "Kekecruise",
     description:
-      "Founded and developed a bicycle rental management system, managing operations and building technical solutions for sustainable transportation.",
+      "Co-founded a bicycle rental management system, managing operations and building technical solutions for sustainable transportation.",
     type: "entrepreneurship",
   },
   {
-    period: "2021 - Present",
+    period: "2021 - 2025",
     title: "IT Student",
     company: "University of Ilorin",
     description:
-      "Pursuing B.Tech in Information Technology with focus on Data Science, AI, and Cybersecurity. Maintaining strong academic performance while contributing to tech communities.",
+      "Completed B.Sc. in Information and Communication Science with a focus on Data Science. Maintained strong academic performance while actively contributing to tech communities.",
     type: "education",
   },
 ];
@@ -95,7 +93,7 @@ export const Experience = () => {
           <div className="space-y-12">
             {experiences.map((exp, index) => (
               <motion.div
-                key={exp.title}
+                key={exp.title + exp.company}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -115,9 +113,11 @@ export const Experience = () => {
                     }`}
                   >
                     <div className="flex flex-wrap items-center gap-3 mb-3">
-                      <span className="text-sm text-muted-foreground font-mono">
-                        {exp.period}
-                      </span>
+                      {exp.period && (
+                        <span className="text-sm text-muted-foreground font-mono">
+                          {exp.period}
+                        </span>
+                      )}
                       <span
                         className={`px-2 py-0.5 text-xs font-medium rounded-full border capitalize ${
                           typeStyles[exp.type as keyof typeof typeStyles]

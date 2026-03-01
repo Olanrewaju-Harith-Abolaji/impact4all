@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Send, Mail, Github, Linkedin, Twitter, MapPin, CheckCircle } from "lucide-react";
+import { Send, Mail, Github, Linkedin, Twitter, MapPin, CheckCircle, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,6 +12,7 @@ const socialLinks = [
   { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
   { icon: Twitter, href: "https://twitter.com", label: "Twitter/X" },
   { icon: Mail, href: "mailto:harith@example.com", label: "Email" },
+  { icon: MessageCircle, href: "https://wa.me/", label: "WhatsApp" },
 ];
 
 export const Contact = () => {
@@ -26,15 +27,11 @@ export const Contact = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-
-    // Simulate form submission
     await new Promise((resolve) => setTimeout(resolve, 1000));
-
     toast({
       title: "Message sent! ✨",
       description: "Thank you for reaching out. I'll get back to you soon!",
     });
-
     setFormData({ name: "", email: "", message: "" });
     setIsSubmitting(false);
   };
@@ -71,7 +68,6 @@ export const Contact = () => {
                     className="bg-secondary/50 border-border focus:border-primary"
                   />
                 </div>
-
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium mb-2">
                     Email
@@ -86,7 +82,6 @@ export const Contact = () => {
                     className="bg-secondary/50 border-border focus:border-primary"
                   />
                 </div>
-
                 <div>
                   <label htmlFor="message" className="block text-sm font-medium mb-2">
                     Message
@@ -102,7 +97,6 @@ export const Contact = () => {
                   />
                 </div>
               </div>
-
               <Button
                 type="submit"
                 size="lg"
@@ -133,14 +127,14 @@ export const Contact = () => {
                 Let's build something amazing together
               </h3>
               <p className="text-muted-foreground leading-relaxed mb-6">
-                I'm currently open to internship opportunities, freelance projects, 
-                and collaboration on impactful tech initiatives. Whether you have a 
-                question or just want to connect, feel free to reach out!
+                I'm currently open to job opportunities, internship roles, and freelance projects. 
+                I'm especially interested in Community Management projects and collaborations on 
+                impactful tech initiatives. Whether you have a question or just want to connect, 
+                feel free to reach out!
               </p>
-
               <div className="flex items-center gap-3 text-muted-foreground">
                 <MapPin className="w-5 h-5 text-primary" />
-                <span>Ilorin, Nigeria</span>
+                <span>FCT, Abuja</span>
               </div>
             </div>
 
@@ -154,7 +148,7 @@ export const Contact = () => {
                   <h4 className="font-semibold mb-1">Quick Response</h4>
                   <p className="text-sm text-muted-foreground">
                     I typically respond within 24-48 hours. For urgent matters, 
-                    reach me on LinkedIn or Twitter.
+                    reach me on LinkedIn, WhatsApp, or Twitter.
                   </p>
                 </div>
               </div>

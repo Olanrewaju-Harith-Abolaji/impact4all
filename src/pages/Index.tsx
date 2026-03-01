@@ -23,9 +23,9 @@ const Index = () => {
         <FeaturedInitiatives />
         <Experience />
         <About />
+        <Advocacy />
         <Skills />
         <Projects />
-        <Advocacy />
         <Certifications />
         <Testimonials />
         <Blog />

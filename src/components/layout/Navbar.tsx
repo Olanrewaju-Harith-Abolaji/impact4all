@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTheme } from "@/components/ThemeProvider";
 
 const navLinks = [
   { label: "About", href: "#about" },
@@ -17,6 +18,7 @@ const navLinks = [
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -68,6 +70,13 @@ export const Navbar = () => {
                   {link.label}
                 </button>
               ))}
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-xl bg-secondary/50 hover:bg-secondary border border-border text-foreground transition-colors"
+                aria-label="Toggle theme"
+              >
+                {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              </button>
               <Button
                 onClick={() => scrollToSection("#contact")}
                 className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
@@ -120,8 +129,15 @@ export const Navbar = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: navLinks.length * 0.05 }}
-                  className="pt-4"
+                  className="pt-4 flex flex-col gap-3"
                 >
+                  <button
+                    onClick={toggleTheme}
+                    className="flex items-center gap-3 py-3 text-lg font-medium text-foreground"
+                  >
+                    {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                    {theme === "dark" ? "Light Mode" : "Dark Mode"}
+                  </button>
                   <Button
                     onClick={() => scrollToSection("#contact")}
                     size="lg"

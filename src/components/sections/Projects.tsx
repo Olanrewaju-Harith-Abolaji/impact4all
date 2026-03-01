@@ -5,15 +5,6 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 
 const projects = [
   {
-    title: "Cybersecurity Awareness Game",
-    description:
-      "An interactive educational game designed to teach cybersecurity best practices. Built as a final-year project to make security education engaging and accessible.",
-    tech: ["Python", "Game Design", "Security"],
-    github: "https://github.com",
-    featured: true,
-    emoji: "🛡️",
-  },
-  {
     title: "Salary Prediction Model",
     description:
       "Machine learning model to predict salaries based on experience, education, and skills. Includes data preprocessing and visualization.",
@@ -75,12 +66,9 @@ export const Projects = () => {
             >
               <div className="card-glass p-6 lg:p-8 hover:border-primary/30 transition-all duration-300">
                 <div className="flex flex-col lg:flex-row gap-6 items-start">
-                  {/* Icon */}
                   <div className="w-16 h-16 bg-primary/10 border border-primary/20 rounded-2xl flex items-center justify-center text-3xl shrink-0 group-hover:scale-110 transition-transform">
                     {project.emoji}
                   </div>
-
-                  {/* Content */}
                   <div className="flex-1">
                     <div className="flex items-start justify-between gap-4 mb-3">
                       <h3 className="text-xl lg:text-2xl font-bold font-display group-hover:text-primary transition-colors">
@@ -99,11 +87,9 @@ export const Projects = () => {
                         </motion.a>
                       </div>
                     </div>
-
                     <p className="text-muted-foreground mb-4 leading-relaxed">
                       {project.description}
                     </p>
-
                     <div className="flex flex-wrap gap-2">
                       {project.tech.map((tech) => (
                         <span

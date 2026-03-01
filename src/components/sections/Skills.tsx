@@ -3,16 +3,6 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 
 const skillCategories = [
   {
-    title: "Programming",
-    icon: "💻",
-    skills: [
-      { name: "Python", level: 90 },
-      { name: "SQL", level: 75 },
-      { name: "JavaScript", level: 65 },
-      { name: "TypeScript", level: 60 },
-    ],
-  },
-  {
     title: "Data & AI",
     icon: "🤖",
     skills: [
@@ -23,23 +13,13 @@ const skillCategories = [
     ],
   },
   {
-    title: "Web Development",
-    icon: "🌐",
-    skills: [
-      { name: "HTML/CSS", level: 80 },
-      { name: "React", level: 60 },
-      { name: "Tailwind CSS", level: 70 },
-      { name: "REST APIs", level: 75 },
-    ],
-  },
-  {
     title: "Tools & Others",
     icon: "🛠️",
     skills: [
       { name: "Git/GitHub", level: 85 },
       { name: "Power BI", level: 70 },
       { name: "Jupyter", level: 90 },
-      { name: "GIS", level: 60 },
+      { name: "Microsoft Office", level: 60 },
     ],
   },
 ];
@@ -108,7 +88,7 @@ export const Skills = () => {
         >
           <p className="text-muted-foreground mb-4">Also familiar with:</p>
           <div className="flex flex-wrap justify-center gap-3">
-            {["Machine Learning", "Cybersecurity", "Data Visualization", "Agile", "Problem Solving", "Team Leadership"].map(
+            {["Machine Learning", "Data Visualization", "Agile", "Problem Solving", "Team Leadership"].map(
               (skill, index) => (
                 <motion.span
                   key={skill}

@@ -87,7 +87,7 @@ export const Hero = () => {
                 size="lg"
                 onClick={scrollToProjects}
                 variant="outline"
-                className="border-border hover:bg-secondary group"
+                className="border-border hover:bg-primary/10 hover:text-primary group"
               >
                 View Projects
                 <ArrowDown className="ml-2 w-4 h-4 group-hover:translate-y-1 transition-transform" />
@@ -95,7 +95,7 @@ export const Hero = () => {
               <Button
                 size="lg"
                 variant="outline"
-                className="border-border hover:bg-secondary group"
+                className="border-border hover:bg-primary/10 hover:text-primary group"
               >
                 <Download className="mr-2 w-4 h-4 group-hover:scale-110 transition-transform" />
                 Download CV

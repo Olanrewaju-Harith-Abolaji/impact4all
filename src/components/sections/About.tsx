@@ -55,24 +55,21 @@ export const About = () => {
             className="space-y-6"
           >
             <p className="text-lg text-muted-foreground leading-relaxed">
-              I'm <span className="text-foreground font-semibold">Olanrewaju Harith Abolaji</span>, 
-              a final-year Information Technology student at the University of Ilorin with a 
-              deep passion for building intelligent systems that solve real-world problems.
+              I'm <span className="text-foreground font-semibold">Olanrewaju Harith Abolaji</span>. 
+              I graduated from the University of Ilorin with a degree in Information and Communication 
+              Science, and I've always been driven by building systems that actually solve problems.
             </p>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              My journey into tech started with Python, and has since evolved into exploring 
-              Data Science, Machine Learning, and Cybersecurity. I believe technology should 
-              serve humanity, which drives my work in creating impactful solutions.
+              My work started with Python and has grown into Data Science and Machine Learning. But for me, 
+              the tech is only useful if it serves people. That's why I focus heavily on{" "}
+              <span className="text-primary font-semibold">disability inclusion</span>. I want to make sure 
+              technology is accessible to everyone, and I work to break down the barriers that keep people 
+              with disabilities out of tech and education.
             </p>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              I'm deeply committed to <span className="text-primary font-semibold">disability inclusion</span> and 
-              ensuring technology is accessible to everyone. As an advocate, I work to break barriers 
-              and create opportunities for persons with disabilities in tech and education.
-            </p>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              Beyond code, I'm passionate about <span className="text-primary font-semibold">youth leadership</span> and 
-              community development. As a Millennium Fellow and founder of Kekecruise, I've learned that 
-              sustainable impact comes from combining technical skills with inclusive vision for positive change.
+              Outside of coding, I'm big on <span className="text-primary font-semibold">leadership and community</span>. 
+              My time as a Millennium Fellow and Aspire Institute Fellow helped me start AccessEd Africa. I've 
+              learned that real change happens when you combine technical skills with a clear, inclusive vision.
             </p>
 
             {/* Quick stats */}

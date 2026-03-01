@@ -1,26 +1,55 @@
 import { motion } from "framer-motion";
 import { SectionHeader } from "@/components/ui/SectionHeader";
+import { Database, Users, Wrench, ShieldCheck, Cloud, Lock, BarChart3, FileText } from "lucide-react";
 
 const skillCategories = [
   {
-    title: "Data & AI",
-    icon: "🤖",
-    skills: [
-      { name: "Pandas", level: 85 },
-      { name: "NumPy", level: 80 },
-      { name: "Scikit-Learn", level: 70 },
-      { name: "Web Scraping", level: 85 },
-    ],
+    title: "Data Science & Management",
+    icon: Database,
+    skills: ["Python", "Machine Learning", "Data Analysis", "Data Visualization (Matplotlib/Seaborn)"],
+    span: "md:col-span-2",
   },
   {
-    title: "Tools & Others",
-    icon: "🛠️",
-    skills: [
-      { name: "Git/GitHub", level: 85 },
-      { name: "Power BI", level: 70 },
-      { name: "Jupyter", level: 90 },
-      { name: "Microsoft Office", level: 60 },
-    ],
+    title: "Project & Community Management",
+    icon: Users,
+    skills: ["Agile/Scrum", "Stakeholder Engagement", "Community Building", "Youth Leadership Development"],
+    span: "md:col-span-1",
+  },
+  {
+    title: "Productivity Tools",
+    icon: Wrench,
+    skills: ["Jupyter Notebooks", "Git/GitHub", "Slack", "Discord", "Microsoft Office Suite"],
+    span: "md:col-span-1",
+  },
+  {
+    title: "Data Governance & Quality",
+    icon: ShieldCheck,
+    skills: ["Data Profiling", "Data Cleaning (Pandas)", "Data Integrity", "Data Security"],
+    span: "md:col-span-1",
+  },
+  {
+    title: "Cloud Storage",
+    icon: Cloud,
+    skills: ["Google Cloud Storage", "Scalable Data Management"],
+    span: "md:col-span-1",
+  },
+  {
+    title: "Data Privacy Compliance",
+    icon: Lock,
+    skills: ["Data Protection Regulations", "NDPR (Nigeria)", "Ethical Data Handling"],
+    span: "md:col-span-1",
+  },
+  {
+    title: "Stakeholder Reporting",
+    icon: BarChart3,
+    skills: ["Complex Data → Business Insights", "Non-Technical Communication", "Visual Reporting"],
+    span: "md:col-span-1",
+  },
+  {
+    title: "Documentation",
+    icon: FileText,
+    skills: ["Data Dictionaries", "Metadata Management", "Team-Wide Data Literacy"],
+    span: "md:col-span-2",
   },
 ];
 
@@ -30,80 +59,80 @@ export const Skills = () => {
       <div className="section-container">
         <SectionHeader
           badge="Skills & Expertise"
-          title="My Tech Stack"
-          description="Technologies and tools I use to bring ideas to life"
+          title="Skills & Tools"
+          description="Technical proficiency and management capabilities I bring to every project"
         />
 
-        <div className="grid md:grid-cols-2 gap-6">
-          {skillCategories.map((category, categoryIndex) => (
+        {/* Management & Strategy label */}
+        <div className="grid md:grid-cols-2 gap-5 mb-10">
+          {skillCategories.slice(0, 5).map((category, i) => (
             <motion.div
               key={category.title}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: categoryIndex * 0.1 }}
-              className="card-glass p-6"
+              transition={{ delay: i * 0.07 }}
+              className={`card-glass p-6 ${category.span}`}
             >
-              <div className="flex items-center gap-3 mb-6">
-                <span className="text-2xl">{category.icon}</span>
-                <h3 className="text-xl font-bold font-display">{category.title}</h3>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2.5 rounded-xl bg-primary/10 text-primary">
+                  <category.icon className="w-5 h-5" />
+                </div>
+                <h3 className="text-lg font-bold font-display">{category.title}</h3>
               </div>
-
-              <div className="space-y-4">
-                {category.skills.map((skill, skillIndex) => (
-                  <motion.div
-                    key={skill.name}
-                    initial={{ opacity: 0, x: -10 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: categoryIndex * 0.1 + skillIndex * 0.05 }}
+              <div className="flex flex-wrap gap-2">
+                {category.skills.map((skill) => (
+                  <span
+                    key={skill}
+                    className="px-3 py-1.5 bg-secondary border border-border rounded-full text-sm text-foreground"
                   >
-                    <div className="flex justify-between mb-2">
-                      <span className="text-sm font-medium">{skill.name}</span>
-                      <span className="text-sm text-muted-foreground">{skill.level}%</span>
-                    </div>
-                    <div className="h-2 bg-muted rounded-full overflow-hidden">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        whileInView={{ width: `${skill.level}%` }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 1, delay: categoryIndex * 0.1 + skillIndex * 0.05, ease: "easeOut" }}
-                        className="h-full bg-gradient-to-r from-primary to-primary/70 rounded-full"
-                      />
-                    </div>
-                  </motion.div>
+                    {skill}
+                  </span>
                 ))}
               </div>
             </motion.div>
           ))}
         </div>
 
-        {/* Additional skills */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+        {/* Management & Strategy Skills */}
+        <motion.h3
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.4 }}
-          className="mt-12 text-center"
+          className="text-xl font-bold font-display text-center mb-6 text-gradient"
         >
-          <p className="text-muted-foreground mb-4">Also familiar with:</p>
-          <div className="flex flex-wrap justify-center gap-3">
-            {["Machine Learning", "Data Visualization", "Agile", "Problem Solving", "Team Leadership"].map(
-              (skill, index) => (
-                <motion.span
-                  key={skill}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.5 + index * 0.05 }}
-                  className="px-4 py-2 bg-secondary border border-border rounded-full text-sm"
-                >
-                  {skill}
-                </motion.span>
-              )
-            )}
-          </div>
-        </motion.div>
+          Management & Strategy Skills
+        </motion.h3>
+
+        <div className="grid md:grid-cols-2 gap-5">
+          {skillCategories.slice(5).map((category, i) => (
+            <motion.div
+              key={category.title}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.07 }}
+              className={`card-glass p-6 ${category.span}`}
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2.5 rounded-xl bg-primary/10 text-primary">
+                  <category.icon className="w-5 h-5" />
+                </div>
+                <h3 className="text-lg font-bold font-display">{category.title}</h3>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {category.skills.map((skill) => (
+                  <span
+                    key={skill}
+                    className="px-3 py-1.5 bg-secondary border border-border rounded-full text-sm text-foreground"
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </section>
   );

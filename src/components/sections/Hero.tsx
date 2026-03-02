@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { ArrowDown, Download, Github, Linkedin, Twitter, Heart, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTypingEffect } from "@/hooks/useTypingEffect";
+import profileImg from "@/assets/profile.jpg";
 
 export const Hero = () => {
   const typingText = useTypingEffect(
@@ -137,13 +138,15 @@ export const Hero = () => {
               <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-primary/10 rounded-3xl blur-2xl" />
               
               {/* Image container */}
-              <div className="relative w-full h-full bg-gradient-to-br from-secondary to-card rounded-3xl border border-border overflow-hidden">
-                <div className="absolute inset-0 flex items-center justify-center text-6xl">
-                  👨‍💻
-                </div>
+              <div className="relative w-full h-full rounded-3xl border border-border overflow-hidden">
+                <img 
+                  src={profileImg} 
+                  alt="Olanrewaju Harith Abolaji" 
+                  className="w-full h-full object-cover object-top"
+                />
                 {/* Decorative elements */}
                 <div className="absolute top-4 right-4 w-3 h-3 bg-primary rounded-full animate-pulse" />
-                <div className="absolute bottom-4 left-4 px-3 py-1 bg-primary/20 border border-primary/30 rounded-full text-xs text-primary font-medium">
+                <div className="absolute bottom-4 left-4 px-3 py-1 bg-primary/20 border border-primary/30 rounded-full text-xs text-primary font-medium backdrop-blur-sm">
                   Python • AI • Data
                 </div>
               </div>

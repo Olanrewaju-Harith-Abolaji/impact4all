@@ -12,6 +12,7 @@ import { Testimonials } from "@/components/sections/Testimonials";
 import { Blog } from "@/components/sections/Blog";
 import { Contact } from "@/components/sections/Contact";
 import { ParticleBackground } from "@/components/ui/ParticleBackground";
+import { FloatingBookMe } from "@/components/ui/FloatingBookMe";
 
 const Index = () => {
   return (
@@ -32,6 +33,7 @@ const Index = () => {
         <Contact />
       </main>
       <Footer />
+      <FloatingBookMe />
     </div>
   );
 };

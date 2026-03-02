@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowDown, Download, Github, Linkedin, Twitter, Heart, Calendar } from "lucide-react";
+import { ArrowDown, Download, Github, Linkedin, Twitter, Heart, Calendar, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTypingEffect } from "@/hooks/useTypingEffect";
 import profileImg from "@/assets/profile.jpg";
@@ -109,6 +109,7 @@ export const Hero = () => {
                 { icon: Github, href: "https://github.com", label: "GitHub" },
                 { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
                 { icon: Twitter, href: "https://twitter.com", label: "Twitter" },
+                { icon: MessageCircle, href: "https://wa.me/YOUR_NUMBER", label: "WhatsApp" },
               ].map(({ icon: Icon, href, label }) => (
                 <motion.a
                   key={label}

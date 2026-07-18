@@ -75,7 +75,7 @@ export const Hero = () => {
                 size="lg"
                 onClick={() => navigate("/projects")}
                 variant="outline"
-                className="border-primary/30 bg-white/60 hover:bg-primary/10 hover:text-primary rounded-full group"
+                className="border-black/20 bg-white/60 hover:bg-white text-black hover:text-black rounded-full group"
               >
                 View Projects
                 <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -83,7 +83,7 @@ export const Hero = () => {
               <Button
                 size="lg"
                 variant="outline"
-                className="border-primary/30 bg-white/60 hover:bg-primary/10 hover:text-primary rounded-full group"
+                className="border-black/20 bg-white/60 hover:bg-white text-black hover:text-black rounded-full group"
               >
                 <Download className="mr-2 w-4 h-4 group-hover:scale-110 transition-transform" />
                 Download CV

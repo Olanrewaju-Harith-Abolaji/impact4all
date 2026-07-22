@@ -13,15 +13,17 @@ export const Layout = () => {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen relative">
+    <div className="min-h-screen relative bg-ivory">
+      <a href="#main-content" className="skip-link">Skip to content</a>
       <Navbar />
       <AnimatePresence mode="wait">
         <motion.main
+          id="main-content"
           key={location.pathname}
-          initial={{ opacity: 0, y: 12 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={{ duration: 0.35, ease: "easeOut" }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.28, ease: "easeOut" }}
           className="relative z-10"
         >
           <Outlet />

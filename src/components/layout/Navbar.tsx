@@ -1,137 +1,183 @@
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useRef, useId } from "react";
 import { Menu, X } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
+/**
+ * Primary navigation — max 5 items, mapped to existing routes.
+ * All other routes (Skills, Advocacy, Achievements, Contact) remain
+ * reachable via CTAs and the footer.
+ */
 const navLinks = [
-  { label: "Home", to: "/" },
-  { label: "Initiatives", to: "/initiatives" },
+  { label: "Work", to: "/projects" },
+  { label: "Impact", to: "/initiatives" },
   { label: "Experience", to: "/experience" },
+  { label: "Insights", to: "/blog" },
   { label: "About", to: "/about" },
-  { label: "Advocacy", to: "/advocacy" },
-  { label: "Skills", to: "/skills" },
-  { label: "Projects", to: "/projects" },
-  { label: "Achievements", to: "/achievements" },
-  { label: "Blog", to: "/blog" },
-  { label: "Contact", to: "/contact" },
 ];
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const menuId = useId();
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll);
+    const handleScroll = () => setIsScrolled(window.scrollY > 8);
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Escape to close + focus trap + body scroll lock
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    document.body.style.overflow = "hidden";
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsMobileMenuOpen(false);
+        return;
+      }
+      if (e.key === "Tab" && panelRef.current) {
+        const focusables = panelRef.current.querySelectorAll<HTMLElement>(
+          'a, button, [tabindex]:not([tabindex="-1"])'
+        );
+        if (!focusables.length) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+    document.addEventListener("keydown", onKey);
+
+    // Focus first link in the panel
+    requestAnimationFrame(() => {
+      const first = panelRef.current?.querySelector<HTMLElement>("a, button");
+      first?.focus();
+    });
+
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+      // Restore focus to menu button
+      (previouslyFocused ?? menuButtonRef.current)?.focus?.();
+    };
+  }, [isMobileMenuOpen]);
 
   const closeMenu = () => setIsMobileMenuOpen(false);
 
   return (
     <>
-      <motion.nav
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.5 }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
           isScrolled
-            ? "bg-white/70 backdrop-blur-xl border-b border-white/60 shadow-sm"
-            : "bg-transparent"
+            ? "bg-ivory/85 backdrop-blur-md border-b border-line"
+            : "bg-transparent border-b border-transparent"
         }`}
       >
-        <div className="section-container">
-          <div className="flex items-center justify-between h-16 lg:h-20">
-            <NavLink to="/" className="text-xl lg:text-2xl font-bold text-gradient">
-              Harith.
-            </NavLink>
+        <nav
+          aria-label="Primary"
+          className="section-container flex items-center justify-between h-16 lg:h-20"
+        >
+          <NavLink
+            to="/"
+            className="font-display text-xl lg:text-2xl font-semibold text-ink tracking-tight"
+          >
+            Harith<span className="text-teal">.</span>
+          </NavLink>
 
-            <div className="hidden lg:flex items-center gap-7">
-              {navLinks.map((link) => (
+          <ul className="hidden lg:flex items-center gap-9" role="list">
+            {navLinks.map((link) => (
+              <li key={link.label}>
                 <NavLink
-                  key={link.label}
                   to={link.to}
                   end={link.to === "/"}
-                  className={({ isActive }) => `nav-link text-sm font-medium ${isActive ? "active" : ""}`}
+                  className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
                 >
                   {link.label}
                 </NavLink>
-              ))}
-              <Button
-                onClick={() => navigate("/contact")}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium rounded-full"
-              >
-                Hire Me
-              </Button>
-            </div>
+              </li>
+            ))}
+          </ul>
 
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 text-foreground"
-              aria-label="Toggle menu"
+          <div className="hidden lg:block">
+            <Button
+              onClick={() => navigate("/contact")}
+              className="bg-teal hover:bg-teal/90 text-white font-semibold rounded-[10px] h-10 px-5"
             >
-              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
+              Let's collaborate
+            </Button>
+          </div>
+
+          <button
+            ref={menuButtonRef}
+            type="button"
+            onClick={() => setIsMobileMenuOpen((v) => !v)}
+            className="lg:hidden inline-flex items-center justify-center w-11 h-11 rounded-[10px] text-ink hover:bg-teal-tint transition-colors"
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isMobileMenuOpen}
+            aria-controls={menuId}
+          >
+            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </nav>
+      </header>
+
+      {/* Mobile sheet */}
+      <div
+        id={menuId}
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Site menu"
+        hidden={!isMobileMenuOpen}
+        className="fixed inset-0 z-40 lg:hidden bg-ivory pt-20"
+      >
+        <div className="section-container py-6">
+          <ul className="flex flex-col divide-y divide-line" role="list">
+            {navLinks.map((link) => (
+              <li key={link.label}>
+                <NavLink
+                  to={link.to}
+                  end={link.to === "/"}
+                  onClick={closeMenu}
+                  className={({ isActive }) =>
+                    `block font-display text-3xl font-medium py-5 min-h-11 ${
+                      isActive ? "text-teal" : "text-ink"
+                    }`
+                  }
+                >
+                  {link.label}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+
+          <div className="pt-8">
+            <Button
+              onClick={() => {
+                closeMenu();
+                navigate("/contact");
+              }}
+              size="lg"
+              className="w-full bg-teal hover:bg-teal/90 text-white font-semibold rounded-[10px] min-h-12"
+            >
+              Let's collaborate
+            </Button>
           </div>
         </div>
-      </motion.nav>
-
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-40 lg:hidden bg-white/95 backdrop-blur-xl pt-20"
-          >
-            <div className="section-container py-8">
-              <div className="flex flex-col gap-2">
-                {navLinks.map((link, index) => (
-                  <motion.div
-                    key={link.label}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.04 }}
-                  >
-                    <NavLink
-                      to={link.to}
-                      end={link.to === "/"}
-                      onClick={closeMenu}
-                      className={({ isActive }) =>
-                        `block text-left text-2xl font-semibold py-3 border-b border-border transition-colors ${
-                          isActive ? "text-primary" : "hover:text-primary"
-                        }`
-                      }
-                    >
-                      {link.label}
-                    </NavLink>
-                  </motion.div>
-                ))}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: navLinks.length * 0.04 }}
-                  className="pt-4"
-                >
-                  <Button
-                    onClick={() => {
-                      closeMenu();
-                      navigate("/contact");
-                    }}
-                    size="lg"
-                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-full"
-                  >
-                    Hire Me
-                  </Button>
-                </motion.div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      </div>
     </>
   );
 };

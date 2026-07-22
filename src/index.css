@@ -2,63 +2,76 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Design system: "Inclusive Digital Leadership"
+ * Palette:
+ *  Deep Ink       #0B1320   218 49% 8%
+ *  Warm Ivory     #F6F4EE   43  30% 95%
+ *  Accessible Teal#146C67   176 69% 25%
+ *  Warm Gold      #E3A72F   40  77% 54%
+ *  Slate          #617080   214 14% 44%
+ *  Soft Line      #DDE3E1   165 10% 88%
+ *  Tinted Teal    #E7F0EE   165 20% 92%
+ */
+
 @layer base {
   :root {
-    /* Soft ambient palette */
-    --color-soft-green: 145 70% 85%;
-    --color-soft-purple: 265 80% 90%;
-    --color-soft-pink: 340 90% 90%;
-    --color-ink: 0 0% 0%;
+    /* Brand tokens */
+    --ink: 218 49% 8%;
+    --ivory: 43 30% 95%;
+    --teal: 176 69% 25%;
+    --teal-tint: 165 20% 92%;
+    --gold: 40 77% 54%;
+    --slate: 214 14% 44%;
+    --line: 165 10% 88%;
 
-    --background: 240 20% 99%;
-    --foreground: 0 0% 0%;
+    /* Semantic (shadcn) */
+    --background: var(--ivory);
+    --foreground: var(--ink);
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 0%;
+    --card-foreground: var(--ink);
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 0%;
+    --popover-foreground: var(--ink);
 
-    --primary: 0 0% 0%;
+    --primary: var(--teal);
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 240 20% 96%;
-    --secondary-foreground: 0 0% 0%;
+    --secondary: var(--teal-tint);
+    --secondary-foreground: var(--ink);
 
-    --muted: 240 15% 94%;
-    --muted-foreground: 0 0% 0%;
+    --muted: 43 24% 92%;
+    --muted-foreground: var(--slate);
 
-    --accent: 340 80% 60%;
-    --accent-foreground: 0 0% 100%;
+    --accent: var(--gold);
+    --accent-foreground: var(--ink);
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 72% 45%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 230 20% 88%;
-    --input: 230 20% 88%;
-    --ring: 260 70% 55%;
+    --border: var(--line);
+    --input: var(--line);
+    --ring: var(--teal);
 
-    --radius: 1rem;
+    --radius: 0.875rem; /* ~14px cards */
 
-    --gradient-primary: linear-gradient(135deg, hsl(260 70% 55%) 0%, hsl(340 80% 60%) 100%);
-    --shadow-card: 0 8px 30px -12px hsl(230 25% 15% / 0.12);
-    --shadow-elevated: 0 20px 50px -20px hsl(230 25% 15% / 0.18);
+    /* Typography */
+    --font-display: "Newsreader", ui-serif, Georgia, Cambria, "Times New Roman", serif;
+    --font-sans: "Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
-    --font-sans: "Figtree", ui-sans-serif, system-ui, -apple-system, sans-serif;
-    --font-display: "Figtree", ui-sans-serif, system-ui, sans-serif;
-    --font-body: "Figtree", ui-sans-serif, system-ui, sans-serif;
+    /* Spacing scale reference (px): 4 8 12 16 24 32 48 64 80 112 144 */
 
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 230 25% 15%;
-    --sidebar-primary: 260 70% 55%;
+    --sidebar-foreground: var(--ink);
+    --sidebar-primary: var(--teal);
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 20% 96%;
-    --sidebar-accent-foreground: 230 25% 15%;
-    --sidebar-border: 230 20% 88%;
-    --sidebar-ring: 260 70% 55%;
+    --sidebar-accent: var(--teal-tint);
+    --sidebar-accent-foreground: var(--ink);
+    --sidebar-border: var(--line);
+    --sidebar-ring: var(--teal);
   }
 
-  /* Force single light theme regardless of class */
   .light,
   .dark {
     color-scheme: light;
@@ -76,64 +89,93 @@
 
   body {
     min-height: 100vh;
-    color: hsl(var(--color-ink));
+    background-color: hsl(var(--ivory));
+    color: hsl(var(--ink));
     font-family: var(--font-sans);
+    font-weight: 400;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: rgb(251, 251, 253);
-    background-image:
-      radial-gradient(60% 55% at 0% 0%, hsl(var(--color-soft-green)) 0%, transparent 62%),
-      radial-gradient(65% 60% at 100% 28%, hsl(var(--color-soft-purple)) 0%, transparent 60%),
-      radial-gradient(55% 55% at 88% 100%, hsl(var(--color-soft-pink)) 0%, transparent 60%);
-    background-repeat: no-repeat;
-    background-attachment: fixed;
     margin: 0;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
-    letter-spacing: -0.02em;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    color: hsl(var(--ink));
+  }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--teal));
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
   }
 }
 
 @layer components {
-  .text-gradient {
-    @apply bg-clip-text text-transparent;
-    background-image: var(--gradient-primary);
-  }
-
-  .card-glass {
-    @apply bg-white/70 backdrop-blur-xl border border-white/60 rounded-2xl;
-    box-shadow: var(--shadow-card);
-  }
-
-  .glow-effect {
-    box-shadow: 0 10px 30px -10px hsl(var(--primary) / 0.5);
-  }
-
   .section-container {
-    @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8;
+    @apply mx-auto w-full px-5 sm:px-8 lg:px-16;
+    max-width: 1240px;
   }
 
   .page-wrap {
-    @apply min-h-[calc(100vh-4rem)] pt-24 pb-16 lg:pt-32;
+    @apply min-h-[calc(100vh-4rem)] pt-28 pb-20 lg:pt-36 lg:pb-28;
+  }
+
+  .prose-readable {
+    max-width: 68ch;
+  }
+
+  /* Accessible skip link */
+  .skip-link {
+    position: absolute;
+    left: 1rem;
+    top: -3rem;
+    z-index: 100;
+    background: hsl(var(--ink));
+    color: hsl(var(--ivory));
+    padding: 0.625rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: top 180ms ease;
+  }
+  .skip-link:focus {
+    top: 1rem;
   }
 
   .nav-link {
-    @apply relative text-muted-foreground hover:text-foreground transition-colors duration-300;
+    @apply relative text-sm font-medium text-foreground/70 hover:text-foreground transition-colors;
   }
-
   .nav-link.active {
     @apply text-foreground;
   }
-
   .nav-link::after {
-    @apply absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300;
     content: '';
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    height: 2px;
+    width: 0;
+    background: hsl(var(--teal));
+    transition: width 220ms ease;
   }
+  .nav-link.active::after { width: 100%; }
 
-  .nav-link:hover::after,
-  .nav-link.active::after {
-    @apply w-full;
+  /* Legacy helpers kept for compatibility with untouched sections */
+  .text-gradient {
+    color: hsl(var(--teal));
   }
+  .card-glass {
+    @apply bg-white border border-border rounded-2xl;
+  }
+  .glow-effect { box-shadow: 0 8px 24px -12px hsl(var(--ink) / 0.25); }
 }

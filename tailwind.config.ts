@@ -14,19 +14,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ['Newsreader', 'ui-serif', 'Georgia', 'serif'],
-        serif: ['Newsreader', 'ui-serif', 'Georgia', 'serif'],
-        body: ['Manrope', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        sans: ['Manrope', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-      },
-      colors: {
-        ink: "hsl(var(--ink))",
-        ivory: "hsl(var(--ivory))",
-        teal: "hsl(var(--teal))",
-        "teal-tint": "hsl(var(--teal-tint))",
-        gold: "hsl(var(--gold))",
-        slate: "hsl(var(--slate))",
-        line: "hsl(var(--line))",
+        display: ['Figtree', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        body: ['Figtree', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans: ['Figtree', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",

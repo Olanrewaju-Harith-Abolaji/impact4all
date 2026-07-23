@@ -117,7 +117,7 @@ export const Navbar = () => {
                       isActive ? "active" : ""
                     }`
                   }
-                  aria-current={({ isActive }: { isActive: boolean }) => (isActive ? "page" : undefined) as never}
+                  
                 >
                   {link.label}
                 </NavLink>

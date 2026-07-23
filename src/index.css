@@ -103,8 +103,48 @@
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
     letter-spacing: -0.02em;
+    color: #000;
+  }
+
+  /* All links black — including hover/visited/focus/active */
+  a,
+  a:link,
+  a:visited,
+  a:hover,
+  a:focus,
+  a:active {
+    color: #000;
+  }
+  /* Gradient text utility should remain transparent */
+  a.text-gradient,
+  a .text-gradient {
+    color: transparent;
+  }
+
+  /* High-contrast focus ring for keyboard users on all interactive elements */
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  button:focus-visible,
+  a:focus-visible,
+  [role="button"]:focus-visible,
+  [role="link"]:focus-visible,
+  [role="menuitem"]:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 3px;
+    box-shadow: 0 0 0 4px hsl(var(--focus-ring-offset));
+  }
+
+  /* Consistent global button styling — never revert to purple */
+  button[aria-pressed="true"],
+  [role="button"][aria-pressed="true"] {
+    background-color: hsl(var(--primary-active));
+    color: hsl(var(--primary-foreground));
   }
 }
+
 
 @layer components {
   .text-gradient {

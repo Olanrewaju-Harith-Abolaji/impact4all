@@ -1,4 +1,24 @@
 import "@testing-library/jest-dom";
+import { expect } from "vitest";
+import { toHaveNoViolations } from "jest-axe";
+
+expect.extend(toHaveNoViolations);
+
+class IO {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+  takeRecords() {
+    return [];
+  }
+  root = null;
+  rootMargin = "";
+  thresholds = [];
+}
+// @ts-expect-error jsdom polyfill
+window.IntersectionObserver = IO;
+// @ts-expect-error jsdom polyfill
+global.IntersectionObserver = IO;
 
 Object.defineProperty(window, "matchMedia", {
   writable: true,

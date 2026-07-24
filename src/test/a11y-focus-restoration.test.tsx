@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { MemoryRouter, Routes, Route, Link } from "react-router-dom";
+import { MemoryRouter, Routes, Route, Link, useNavigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 
 const PageA = () => (
@@ -12,14 +12,18 @@ const PageA = () => (
     </Link>
   </div>
 );
-const PageB = () => (
-  <div>
-    <h1>Page B</h1>
-    <Link to="/" data-testid="go-home">
-      Home
-    </Link>
-  </div>
-);
+
+const PageB = () => {
+  const navigate = useNavigate();
+  return (
+    <div>
+      <h1>Page B</h1>
+      <button type="button" data-testid="go-back" onClick={() => navigate(-1)}>
+        Back
+      </button>
+    </div>
+  );
+};
 
 const renderApp = (initial = "/") =>
   render(
@@ -49,7 +53,7 @@ describe("Focus restoration on route changes", () => {
     expect(document.getElementById("main-content")).toHaveAttribute("tabindex", "-1");
   });
 
-  it("restores focus to the triggering link on browser back navigation", async () => {
+  it("restores focus to the triggering link on back navigation", async () => {
     const user = userEvent.setup();
     renderApp("/");
     const trigger = screen.getByTestId("go-b");
@@ -57,8 +61,7 @@ describe("Focus restoration on route changes", () => {
     await user.click(trigger);
     await waitFor(() => screen.getByRole("heading", { name: "Page B" }));
 
-    // Simulate browser back
-    window.history.back();
+    await user.click(screen.getByTestId("go-back"));
     await waitFor(() => screen.getByRole("heading", { name: "Page A" }));
     await waitFor(() => {
       expect(document.activeElement).toBe(screen.getByTestId("go-b"));

@@ -1,23 +1,22 @@
 import { describe, it, expect } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { MemoryRouter, Routes, Route, Link, useNavigate } from "react-router-dom";
+import { MemoryRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 
-const PageA = () => (
-  <div>
-    <h1>Page A</h1>
-    <Link to="/b" data-testid="go-b">
-      Go to B
-    </Link>
-  </div>
-);
+/**
+ * Focus-restoration tests use the real Layout (which renders the persistent
+ * Navbar). The "Contact" NavLink stays mounted across route changes, so we
+ * can assert that navigating back restores focus to the exact link that
+ * triggered the forward navigation.
+ */
 
-const PageB = () => {
+const HomeStub = () => <h1>Home</h1>;
+const ContactStub = () => {
   const navigate = useNavigate();
   return (
     <div>
-      <h1>Page B</h1>
+      <h1>Contact</h1>
       <button type="button" data-testid="go-back" onClick={() => navigate(-1)}>
         Back
       </button>
@@ -30,19 +29,28 @@ const renderApp = (initial = "/") =>
     <MemoryRouter initialEntries={[initial]}>
       <Routes>
         <Route element={<Layout />}>
-          <Route path="/" element={<PageA />} />
-          <Route path="/b" element={<PageB />} />
+          <Route path="/" element={<HomeStub />} />
+          <Route path="/contact" element={<ContactStub />} />
         </Route>
       </Routes>
     </MemoryRouter>,
   );
 
+const contactNavLink = () => {
+  // Two "Contact" links exist (desktop nav + mobile nav container). Pick the
+  // desktop one — it's a plain anchor that is always in the DOM.
+  const links = screen.getAllByRole("link", { name: /^contact$/i });
+  return links[0];
+};
+
 describe("Focus restoration on route changes", () => {
   it("focuses <main> after a forward navigation", async () => {
     const user = userEvent.setup();
     renderApp("/");
-    await user.click(screen.getByTestId("go-b"));
-    await waitFor(() => expect(screen.getByRole("heading", { name: "Page B" })).toBeInTheDocument());
+    await user.click(contactNavLink());
+    await waitFor(() =>
+      expect(screen.getByRole("heading", { name: "Contact" })).toBeInTheDocument(),
+    );
     await waitFor(() => {
       expect(document.activeElement).toBe(document.getElementById("main-content"));
     });
@@ -53,18 +61,22 @@ describe("Focus restoration on route changes", () => {
     expect(document.getElementById("main-content")).toHaveAttribute("tabindex", "-1");
   });
 
-  it("restores focus to the triggering link on back navigation", async () => {
+  it("restores focus to the triggering nav link on back navigation", async () => {
     const user = userEvent.setup();
     renderApp("/");
-    const trigger = screen.getByTestId("go-b");
+    const trigger = contactNavLink();
     trigger.focus();
     await user.click(trigger);
-    await waitFor(() => screen.getByRole("heading", { name: "Page B" }));
+    await waitFor(() =>
+      expect(screen.getByRole("heading", { name: "Contact" })).toBeInTheDocument(),
+    );
 
     await user.click(screen.getByTestId("go-back"));
-    await waitFor(() => screen.getByRole("heading", { name: "Page A" }));
+    await waitFor(() =>
+      expect(screen.getByRole("heading", { name: "Home" })).toBeInTheDocument(),
+    );
     await waitFor(() => {
-      expect(document.activeElement).toBe(screen.getByTestId("go-b"));
+      expect(document.activeElement).toBe(trigger);
     });
   });
 });

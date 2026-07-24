@@ -19,6 +19,8 @@ class IO {
 window.IntersectionObserver = IO;
 // @ts-expect-error jsdom polyfill
 global.IntersectionObserver = IO;
+// @ts-expect-error jsdom polyfill
+globalThis.IntersectionObserver = IO;
 
 Object.defineProperty(window, "matchMedia", {
   writable: true,

@@ -5,15 +5,12 @@ import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 const navLinks = [
-  { label: "Home", to: "/" },
+  { label: "About", to: "/about" },
+  { label: "Focus Areas", to: "/skills" },
   { label: "Initiatives", to: "/initiatives" },
   { label: "Experience", to: "/experience" },
-  { label: "About", to: "/about" },
-  { label: "Advocacy", to: "/advocacy" },
-  { label: "Skills", to: "/skills" },
-  { label: "Projects", to: "/projects" },
-  { label: "Achievements", to: "/achievements" },
-  { label: "Blog", to: "/blog" },
+  { label: "Work", to: "/projects" },
+  { label: "Recognition", to: "/achievements" },
   { label: "Contact", to: "/contact" },
 ];
 
@@ -27,12 +24,13 @@ export const Navbar = () => {
   const firstMenuItemRef = useRef<HTMLAnchorElement>(null);
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll);
+    const handleScroll = () => setIsScrolled(window.scrollY > 12);
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close menu on route change and restore focus to toggle
+  // Close menu on route change and restore focus
   useEffect(() => {
     if (isMobileMenuOpen) {
       setIsMobileMenuOpen(false);
@@ -41,11 +39,10 @@ export const Navbar = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
 
-  // Focus trap + Escape + focus first item when menu opens; restore focus on close
+  // Focus trap + Escape + lock body scroll while open
   useEffect(() => {
     if (!isMobileMenuOpen) return;
     const previouslyFocused = document.activeElement as HTMLElement | null;
-    // Focus first menu item shortly after mount
     const t = window.setTimeout(() => firstMenuItemRef.current?.focus(), 30);
 
     const handleKey = (e: KeyboardEvent) => {
@@ -85,64 +82,64 @@ export const Navbar = () => {
 
   return (
     <>
-      <motion.nav
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.5 }}
+      <nav
         aria-label="Primary"
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-200 ${
           isScrolled
-            ? "bg-white/70 backdrop-blur-xl border-b border-white/60 shadow-sm"
-            : "bg-transparent"
+            ? "bg-[color:var(--brand-background)]/95 backdrop-blur border-b border-border"
+            : "bg-[color:var(--brand-background)]/80 backdrop-blur-sm border-b border-transparent"
         }`}
       >
         <div className="section-container">
           <div className="flex items-center justify-between h-16 lg:h-20">
             <NavLink
               to="/"
-              className="text-xl lg:text-2xl font-bold text-gradient rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
-              aria-label="Harith — Home"
+              className="text-lg lg:text-xl font-semibold tracking-tight text-foreground rounded-md focus-visible:outline-none"
+              aria-label="Olanrewaju Harith A. — Home"
             >
-              Harith.
+              Olanrewaju Harith A.
             </NavLink>
 
-            <div className="hidden lg:flex items-center gap-7">
+            <div className="hidden lg:flex items-center gap-8">
               {navLinks.map((link) => (
                 <NavLink
                   key={link.label}
                   to={link.to}
                   end={link.to === "/"}
                   className={({ isActive }) =>
-                    `nav-link text-sm font-medium rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 ${
+                    `nav-link text-[15px] font-medium py-2 rounded-sm focus-visible:outline-none ${
                       isActive ? "active" : ""
                     }`
                   }
-                  
                 >
                   {link.label}
                 </NavLink>
               ))}
               <Button
                 onClick={() => navigate("/contact")}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium rounded-full"
+                className="bg-primary hover:bg-[hsl(var(--primary-hover))] text-primary-foreground font-medium rounded-[var(--radius-button)] min-h-11 px-5"
               >
-                Hire Me
+                Work With Me
               </Button>
             </div>
 
             <button
               ref={toggleRef}
               onClick={() => setIsMobileMenuOpen((v) => !v)}
-              className="lg:hidden p-2 text-foreground rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
+              className="lg:hidden inline-flex items-center justify-center min-h-11 min-w-11 text-foreground rounded-md focus-visible:outline-none"
               aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
               aria-expanded={isMobileMenuOpen}
               aria-controls="mobile-menu"
             >
-              {isMobileMenuOpen ? <X className="w-6 h-6" aria-hidden="true" /> : <Menu className="w-6 h-6" aria-hidden="true" />}
+              {isMobileMenuOpen ? (
+                <X className="w-6 h-6" aria-hidden="true" />
+              ) : (
+                <Menu className="w-6 h-6" aria-hidden="true" />
+              )}
             </button>
           </div>
         </div>
-      </motion.nav>
+      </nav>
 
       <AnimatePresence>
         {isMobileMenuOpen && (
@@ -152,53 +149,42 @@ export const Navbar = () => {
             role="dialog"
             aria-modal="true"
             aria-label="Mobile navigation"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-40 lg:hidden bg-white/95 backdrop-blur-xl pt-20"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            className="fixed inset-0 z-40 lg:hidden bg-[color:var(--brand-background)] pt-20 overflow-y-auto"
           >
-            <div className="section-container py-8">
-              <nav aria-label="Mobile primary" className="flex flex-col gap-2">
+            <div className="section-container py-6">
+              <nav aria-label="Mobile primary" className="flex flex-col">
                 {navLinks.map((link, index) => (
-                  <motion.div
+                  <NavLink
                     key={link.label}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.04 }}
+                    ref={index === 0 ? firstMenuItemRef : undefined}
+                    to={link.to}
+                    end={link.to === "/"}
+                    onClick={closeMenu}
+                    className={({ isActive }) =>
+                      `block text-left text-xl font-medium py-4 border-b border-border rounded-sm focus-visible:outline-none min-h-11 ${
+                        isActive ? "text-foreground" : "text-muted-foreground"
+                      }`
+                    }
                   >
-                    <NavLink
-                      ref={index === 0 ? firstMenuItemRef : undefined}
-                      to={link.to}
-                      end={link.to === "/"}
-                      onClick={closeMenu}
-                      className={({ isActive }) =>
-                        `block text-left text-2xl font-semibold py-3 border-b border-border rounded-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 ${
-                          isActive ? "text-foreground" : "hover:text-foreground"
-                        }`
-                      }
-                    >
-                      {link.label}
-                    </NavLink>
-                  </motion.div>
+                    {link.label}
+                  </NavLink>
                 ))}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: navLinks.length * 0.04 }}
-                  className="pt-4"
-                >
+                <div className="pt-6">
                   <Button
                     onClick={() => {
                       closeMenu();
                       navigate("/contact");
                     }}
                     size="lg"
-                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-full"
+                    className="w-full bg-primary hover:bg-[hsl(var(--primary-hover))] text-primary-foreground font-medium rounded-[var(--radius-button)] min-h-12"
                   >
-                    Hire Me
+                    Work With Me
                   </Button>
-                </motion.div>
+                </div>
               </nav>
             </div>
           </motion.div>

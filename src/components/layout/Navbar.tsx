@@ -5,6 +5,7 @@ import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 const navLinks = [
+  { label: "Home", to: "/" },
   { label: "About", to: "/about" },
   { label: "Focus Areas", to: "/skills" },
   { label: "Initiatives", to: "/initiatives" },
@@ -30,7 +31,6 @@ export const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close menu on route change and restore focus
   useEffect(() => {
     if (isMobileMenuOpen) {
       setIsMobileMenuOpen(false);
@@ -39,7 +39,6 @@ export const Navbar = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
 
-  // Focus trap + Escape + lock body scroll while open
   useEffect(() => {
     if (!isMobileMenuOpen) return;
     const previouslyFocused = document.activeElement as HTMLElement | null;
@@ -95,7 +94,7 @@ export const Navbar = () => {
             <NavLink
               to="/"
               className="text-lg lg:text-xl font-semibold tracking-tight text-foreground rounded-md focus-visible:outline-none"
-              aria-label="Olanrewaju Harith A. — Home"
+              aria-label="Olanrewaju Harith Abolaji — Home"
             >
               Olanrewaju Harith A.
             </NavLink>
@@ -119,7 +118,7 @@ export const Navbar = () => {
                 onClick={() => navigate("/contact")}
                 className="bg-primary hover:bg-[hsl(var(--primary-hover))] text-primary-foreground font-medium rounded-[var(--radius-button)] min-h-11 px-5"
               >
-                Work With Me
+                Work with me
               </Button>
             </div>
 
@@ -182,7 +181,7 @@ export const Navbar = () => {
                     size="lg"
                     className="w-full bg-primary hover:bg-[hsl(var(--primary-hover))] text-primary-foreground font-medium rounded-[var(--radius-button)] min-h-12"
                   >
-                    Work With Me
+                    Work with me
                   </Button>
                 </div>
               </nav>

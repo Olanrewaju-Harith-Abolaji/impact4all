@@ -133,12 +133,16 @@ test.describe("Contact page — form keyboard flow", () => {
     await expect(page.getByText(/please enter your name/i)).toBeVisible();
   });
 
-  test("Tab order flows name → email → message → submit", async ({ page }) => {
+  test("Tab order flows name → email → organisation → opportunity → message → submit", async ({ page }) => {
     await page.goto("/contact");
-    await page.getByLabel(/name/i).focus();
-    await expect(page.getByLabel(/name/i)).toBeFocused();
+    await page.getByLabel(/^name/i).focus();
+    await expect(page.getByLabel(/^name/i)).toBeFocused();
     await page.keyboard.press("Tab");
     await expect(page.getByLabel(/email/i)).toBeFocused();
+    await page.keyboard.press("Tab");
+    await expect(page.getByLabel(/organisation/i)).toBeFocused();
+    await page.keyboard.press("Tab");
+    await expect(page.getByLabel(/opportunity/i)).toBeFocused();
     await page.keyboard.press("Tab");
     await expect(page.getByLabel(/message/i)).toBeFocused();
     await page.keyboard.press("Tab");

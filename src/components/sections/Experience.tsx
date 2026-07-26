@@ -3,69 +3,77 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 
 const experiences = [
   {
-    period: "2025 – Present",
-    title: "Co-founder",
-    company: "AccessEd Africa, formerly TechNexus",
+    period: "2025 - Present",
+    title: "Founder & Project Manager",
+    company: "AccessEd Africa",
     description:
-      "Helping lead a digital literacy initiative supporting young people in underserved Nigerian communities. Contribute to programme design, participant coordination and documentation of outcomes.",
-    type: "leadership",
+      "Founded an NGO bridging the digital gap for students with disabilities. Leading the development of accessible software with screen readers, targeting 50,000+ students across Africa.",
+    type: "management",
   },
   {
-    period: "2024 – 2025",
-    title: "Departmental Stakeholder Chairman",
-    company: "University of Ilorin",
+    period: "2024 - Present",
+    title: "Co-Founder",
+    company: "TechNexus",
     description:
-      "Represented more than 4,000 students in departmental engagements. Coordinated communication with faculty and student representatives and helped follow through on documented concerns.",
-    type: "leadership",
-  },
-  {
-    period: "2024 – 2025",
-    title: "Millennium Fellowship Campus Director",
-    company: "United Nations Academic Impact & Millennium Campus Network",
-    description:
-      "Participated in the Millennium Fellowship and progressed to Campus Director. Supported peer fellows, coordinated campus-level activities and contributed to fellowship reporting.",
-    type: "fellowship",
+      "Co-founded a digital empowerment initiative providing tech education, mentorship, and resources to underserved youth. Empowering 1,000+ young people in the digital economy.",
+    type: "management",
   },
   {
     period: "2024",
-    title: "Disability inclusion advocacy",
-    company: "Community engagements",
-    description:
-      "Contributed to conversations, writing and programme involvement focused on the meaningful participation of persons with disabilities in education, technology and community life.",
-    type: "advocacy",
-  },
-  {
-    period: "2024",
-    title: "AI and Robotics Intern",
+    title: "AI & Robotics Intern",
     company: "National Centre for Artificial Intelligence and Robotics",
     description:
-      "Completed an internship exposure to artificial intelligence and robotics projects. Strengthened understanding of data workflows and technical documentation that now supports programme reporting.",
+      "Working on cutting-edge AI projects and learning from industry experts in artificial intelligence and robotics development.",
     type: "internship",
   },
   {
-    title: "Co-founder",
+    period: "2024 - Present",
+    title: "Disability Inclusion Advocate",
+    company: "Community Impact Initiative",
+    description:
+      "Championing accessibility in technology and education. Leading campaigns to ensure digital products and educational resources are accessible to persons with disabilities.",
+    type: "advocacy",
+  },
+  {
+    period: "2025",
+    title: "Millennium Fellow",
+    company: "United Nations Academic Impact",
+    description:
+      "Selected among top youth leaders globally. Led initiatives focused on sustainable development goals, disability inclusion, and community impact through technology.",
+    type: "fellowship",
+  },
+  {
+    title: "Youth Leadership & Advocacy",
+    company: "Various Organizations",
+    description:
+      "Serving as a Millennium Fellow and Aspire Institute Fellow to drive social change. I focus on mentoring young technologists and advocating for inclusive policies that bridge the digital gap for students with disabilities.",
+    type: "leadership",
+  },
+  {
+    title: "Co-Founder",
     company: "Kekecruise",
     description:
-      "Co-founded a bicycle rental management project. Contributed to operational planning and the technical setup supporting day-to-day activities.",
+      "Co-founded a bicycle rental management system, managing operations and building technical solutions for sustainable transportation.",
     type: "entrepreneurship",
   },
   {
-    period: "2021 – August 2025",
-    title: "B.Sc. Information and Communication Science",
+    period: "2021 - 2025",
+    title: "IT Student",
     company: "University of Ilorin",
     description:
-      "Completed a degree in Information and Communication Science with Second Class Upper Honours. Studies strengthened my understanding of information systems, digital technologies and how access to information shapes participation and opportunity.",
+      "Completed B.Sc. in Information and Communication Science with a focus on Data Science. Maintained strong academic performance while actively contributing to tech communities.",
     type: "education",
   },
 ];
 
 const typeStyles = {
-  internship: "bg-blue-500/10 text-blue-500 border-blue-500/20",
-  fellowship: "bg-amber-500/10 text-amber-600 border-amber-500/20",
-  entrepreneurship: "bg-green-500/10 text-green-600 border-green-500/20",
-  education: "bg-purple-500/10 text-purple-600 border-purple-500/20",
-  advocacy: "bg-pink-500/10 text-pink-600 border-pink-500/20",
-  leadership: "bg-cyan-500/10 text-cyan-700 border-cyan-500/20",
+  internship: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+  fellowship: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+  entrepreneurship: "bg-green-500/10 text-green-400 border-green-500/20",
+  education: "bg-purple-500/10 text-purple-400 border-purple-500/20",
+  advocacy: "bg-pink-500/10 text-pink-400 border-pink-500/20",
+  leadership: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20",
+  management: "bg-teal-500/10 text-teal-400 border-teal-500/20",
 };
 
 export const Experience = () => {
@@ -73,12 +81,13 @@ export const Experience = () => {
     <section id="experience" className="py-20 lg:py-32 bg-secondary/20 relative">
       <div className="section-container">
         <SectionHeader
-          badge="Experience"
-          title="Roles, responsibilities and learning"
-          description="Leadership, advocacy, programme and academic roles that shape my current work."
+          badge="Journey"
+          title="Experience & Leadership"
+          description="My path in technology, leadership, and social impact"
         />
 
         <div className="relative">
+          {/* Timeline line */}
           <div className="absolute left-0 md:left-1/2 top-0 bottom-0 w-px bg-border md:-translate-x-px" />
 
           <div className="space-y-12">
@@ -93,8 +102,10 @@ export const Experience = () => {
                   index % 2 === 0 ? "md:flex-row-reverse" : ""
                 }`}
               >
+                {/* Timeline dot */}
                 <div className="absolute left-0 md:left-1/2 w-4 h-4 bg-primary rounded-full border-4 border-background md:-translate-x-1/2 z-10" />
 
+                {/* Content */}
                 <div className="flex-1 pl-8 md:pl-0">
                   <div
                     className={`card-glass p-6 ${
@@ -125,6 +136,7 @@ export const Experience = () => {
                   </div>
                 </div>
 
+                {/* Spacer for alternating layout */}
                 <div className="hidden md:block flex-1" />
               </motion.div>
             ))}

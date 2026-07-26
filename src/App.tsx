@@ -12,6 +12,7 @@ import InitiativesPage from "./pages/InitiativesPage";
 import ExperiencePage from "./pages/ExperiencePage";
 import AdvocacyPage from "./pages/AdvocacyPage";
 import AchievementsPage from "./pages/AchievementsPage";
+import BlogPage from "./pages/BlogPage";
 import ContactPage from "./pages/ContactPage";
 import NotFound from "./pages/NotFound";
 
@@ -33,6 +34,7 @@ const App = () => (
             <Route path="/experience" element={<ExperiencePage />} />
             <Route path="/advocacy" element={<AdvocacyPage />} />
             <Route path="/achievements" element={<AchievementsPage />} />
+            <Route path="/blog" element={<BlogPage />} />
             <Route path="/contact" element={<ContactPage />} />
           </Route>
           <Route path="*" element={<NotFound />} />

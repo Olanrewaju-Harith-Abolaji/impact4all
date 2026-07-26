@@ -1,24 +1,24 @@
 import { useReducedMotion, motion } from "framer-motion";
-import { ArrowRight, Download, Github, Linkedin, Twitter, MessageCircle } from "lucide-react";
+import { ArrowRight, Github, Linkedin, Twitter, MessageCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import profileImg from "@/assets/profile.jpg";
 
-// Stage One: if a verified CV link is provided later, set CV_URL to that path
-// and the secondary CTA will switch from "Let's Collaborate" back to "Download My CV".
+// When a verified CV link is available, set CV_URL and the secondary CTA
+// will switch from "Let's collaborate" to "Download my CV".
 const CV_URL: string | null = null;
 
 const credibility = [
-  "Digital Literacy & Youth Development",
-  "Disability Inclusion Advocacy",
-  "Millennium Fellow",
+  "Digital literacy advocate",
+  "Youth leadership practitioner",
+  "Disability inclusion advocate",
 ];
 
 const socialLinks = [
-  { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
-  { icon: Github, href: "https://github.com", label: "GitHub" },
-  { icon: Twitter, href: "https://twitter.com", label: "X (Twitter)" },
-  { icon: MessageCircle, href: "https://wa.me/", label: "WhatsApp" },
+  { icon: Linkedin, href: "https://linkedin.com", label: "Visit my LinkedIn profile" },
+  { icon: Github, href: "https://github.com", label: "Visit my GitHub profile" },
+  { icon: Twitter, href: "https://twitter.com", label: "Visit my X profile" },
+  { icon: MessageCircle, href: "https://wa.me/", label: "Contact me on WhatsApp" },
 ];
 
 export const Hero = () => {
@@ -49,44 +49,43 @@ export const Hero = () => {
     >
       <div className="section-container">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
-          {/* Copy — 7 cols on desktop */}
           <div className="lg:col-span-7 order-2 lg:order-1">
             <motion.p
               {...fade(8, 0.3)}
               className="text-[11px] sm:text-xs font-semibold tracking-[0.18em] uppercase text-[color:var(--brand-text-secondary)] mb-6"
             >
-              Digital Literacy • Youth Leadership • Inclusive Development
+              Digital literacy • Youth leadership • Inclusive development
             </motion.p>
 
             <motion.h1
               id="hero-heading"
               {...fade(12, 0.42)}
-              className="font-serif-display text-[38px] sm:text-[48px] lg:text-[60px] xl:text-[64px] text-foreground mb-6 max-w-[18ch]"
+              className="font-serif-display text-[38px] sm:text-[48px] lg:text-[60px] xl:text-[64px] text-foreground mb-6 max-w-[20ch]"
             >
-              Building more inclusive pathways for young people and communities.
+              Expanding access to digital skills, leadership and opportunity.
             </motion.h1>
 
             <motion.p
               {...fade(0, 0.36)}
               className="text-[17px] leading-[1.65] text-[color:var(--brand-text-secondary)] max-w-[68ch] mb-8"
             >
-              I advocate for digital literacy, youth leadership, community
-              development and the meaningful inclusion of persons with
-              disabilities. Through training, mentorship, programme coordination
-              and community engagement, I help expand access to skills,
-              participation and opportunity.
+              I work with young people and underserved communities across Africa
+              to make digital skills more accessible, practical and relevant.
+              Through training, mentorship, advocacy and programme coordination,
+              I also promote the meaningful participation of persons with
+              disabilities in education, technology and community life.
             </motion.p>
 
             <motion.div
               {...fade(0, 0.3)}
-              className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-10"
+              className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-8"
             >
               <Button
                 size="lg"
-                onClick={() => navigate("/initiatives")}
+                onClick={() => navigate("/projects")}
                 className="group bg-primary hover:bg-[hsl(var(--primary-hover))] text-primary-foreground font-medium rounded-[var(--radius-button)] min-h-12 px-6"
               >
-                Explore My Work
+                Explore my work
                 <ArrowRight
                   className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-0.5"
                   aria-hidden="true"
@@ -101,8 +100,7 @@ export const Hero = () => {
                   className="rounded-[var(--radius-button)] min-h-12 px-6 border-border text-foreground hover:bg-[color:var(--brand-surface-soft)]"
                 >
                   <a href={CV_URL} download>
-                    <Download className="mr-2 w-4 h-4" aria-hidden="true" />
-                    Download My CV
+                    Download my CV
                   </a>
                 </Button>
               ) : (
@@ -112,12 +110,26 @@ export const Hero = () => {
                   onClick={() => navigate("/contact")}
                   className="rounded-[var(--radius-button)] min-h-12 px-6 border-border text-foreground hover:bg-[color:var(--brand-surface-soft)]"
                 >
-                  Let&rsquo;s Collaborate
+                  Let&rsquo;s collaborate
                 </Button>
               )}
             </motion.div>
 
-            {/* Credibility indicators */}
+            <motion.p
+              {...fade(0, 0.3)}
+              className="text-sm text-[color:var(--brand-text-secondary)] max-w-[68ch] mb-4"
+            >
+              Open to employment, consulting, partnerships, fellowships,
+              research, speaking and mission-aligned collaborations.
+            </motion.p>
+
+            <motion.p
+              {...fade(0, 0.3)}
+              className="text-sm italic text-foreground mb-8"
+            >
+              &ldquo;Access is a leadership responsibility, not an act of charity.&rdquo;
+            </motion.p>
+
             <motion.ul
               {...fade(0, 0.3)}
               aria-label="Areas of focus"
@@ -137,7 +149,6 @@ export const Hero = () => {
               ))}
             </motion.ul>
 
-            {/* Social links */}
             <ul className="flex gap-2" aria-label="Social profiles">
               {socialLinks.map(({ icon: Icon, href, label }) => (
                 <li key={label}>
@@ -155,7 +166,6 @@ export const Hero = () => {
             </ul>
           </div>
 
-          {/* Portrait — 5 cols on desktop, above copy on mobile per spec */}
           <motion.div
             {...portraitMotion}
             className="lg:col-span-5 order-1 lg:order-2"
@@ -170,7 +180,7 @@ export const Hero = () => {
               >
                 <img
                   src={profileImg}
-                  alt="Portrait of Olanrewaju Harith A., digital literacy and youth development advocate."
+                  alt="Olanrewaju Harith Abolaji, digital literacy and youth development advocate."
                   width={800}
                   height={1000}
                   loading="eager"

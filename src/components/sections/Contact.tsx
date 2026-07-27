@@ -11,8 +11,8 @@ const socialLinks = [
   { icon: Github, href: "https://github.com", label: "GitHub" },
   { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
   { icon: Twitter, href: "https://twitter.com", label: "Twitter/X" },
-  { icon: Mail, href: "mailto:harith@example.com", label: "Email" },
-  { icon: MessageCircle, href: "https://wa.me/", label: "WhatsApp" },
+  { icon: Mail, href: "mailto:haritholanrewaju@gmail.com", label: "Email" },
+  { icon: MessageCircle, href: "https://wa.me/2348133644304", label: "WhatsApp" },
 ];
 
 type Errors = Partial<Record<"name" | "email" | "message", string>>;

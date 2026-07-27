@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { FloatingBookMe } from "@/components/ui/FloatingBookMe";
+
 
 /**
  * Focus-restoration model:
@@ -89,7 +89,6 @@ export const Layout = () => {
         </motion.main>
       </AnimatePresence>
       <Footer />
-      <FloatingBookMe />
     </div>
   );
 };

@@ -1,24 +1,28 @@
 import { useReducedMotion, motion } from "framer-motion";
-import { ArrowRight, Download, Github, Linkedin, Twitter, MessageCircle } from "lucide-react";
+import { ArrowRight, Download, Github, Linkedin, Twitter, MessageCircle, Mail } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import profileImg from "@/assets/profile.jpg";
 
-// Stage One: if a verified CV link is provided later, set CV_URL to that path
-// and the secondary CTA will switch from "Let's Collaborate" back to "Download My CV".
+// Set to a real, verified CV URL to switch the secondary CTA to "Download my CV".
+// If null, the secondary CTA falls back to "Start a conversation" → /contact.
 const CV_URL: string | null = null;
 
 const credibility = [
-  "Digital Literacy & Youth Development",
-  "Disability Inclusion Advocacy",
-  "Millennium Fellow",
+  { value: "2,500+", label: "young people reached" },
+  { value: "90%", label: "programme completion" },
+  { value: "4,000+", label: "students represented" },
 ];
+
+const WHATSAPP_URL = "https://wa.me/2348133644304";
+const EMAIL_URL = "mailto:haritholanrewaju@gmail.com";
 
 const socialLinks = [
   { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
   { icon: Github, href: "https://github.com", label: "GitHub" },
   { icon: Twitter, href: "https://twitter.com", label: "X (Twitter)" },
-  { icon: MessageCircle, href: "https://wa.me/", label: "WhatsApp" },
+  { icon: MessageCircle, href: WHATSAPP_URL, label: "WhatsApp" },
+  { icon: Mail, href: EMAIL_URL, label: "Email" },
 ];
 
 export const Hero = () => {
@@ -49,13 +53,13 @@ export const Hero = () => {
     >
       <div className="section-container">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
-          {/* Copy — 7 cols on desktop */}
+          {/* Copy */}
           <div className="lg:col-span-7 order-2 lg:order-1">
             <motion.p
               {...fade(8, 0.3)}
               className="text-[11px] sm:text-xs font-semibold tracking-[0.18em] uppercase text-[color:var(--brand-text-secondary)] mb-6"
             >
-              Digital Literacy • Youth Leadership • Inclusive Development
+              Digital Literacy • Youth Leadership • Disability Inclusion
             </motion.p>
 
             <motion.h1
@@ -63,30 +67,32 @@ export const Hero = () => {
               {...fade(12, 0.42)}
               className="font-serif-display text-[38px] sm:text-[48px] lg:text-[60px] xl:text-[64px] text-foreground mb-6 max-w-[18ch]"
             >
-              Building more inclusive pathways for young people and communities.
+              Expanding access to digital skills, leadership and opportunity.
             </motion.h1>
 
             <motion.p
               {...fade(0, 0.36)}
-              className="text-[17px] leading-[1.65] text-[color:var(--brand-text-secondary)] max-w-[68ch] mb-8"
+              className="text-[17px] leading-[1.65] text-[color:var(--brand-text-secondary)] mb-8"
+              style={{ maxWidth: "620px" }}
             >
-              I advocate for digital literacy, youth leadership, community
-              development and the meaningful inclusion of persons with
-              disabilities. Through training, mentorship, programme coordination
-              and community engagement, I help expand access to skills,
-              participation and opportunity.
+              I work with young people and underserved communities in Nigeria,
+              with a wider commitment to digital inclusion across Africa.
+              Through training, mentorship, advocacy and programme coordination,
+              I promote practical digital learning and the meaningful
+              participation of persons with disabilities in education,
+              technology and community life.
             </motion.p>
 
             <motion.div
               {...fade(0, 0.3)}
-              className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-10"
+              className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-4"
             >
               <Button
                 size="lg"
                 onClick={() => navigate("/initiatives")}
                 className="group bg-primary hover:bg-[hsl(var(--primary-hover))] text-primary-foreground font-medium rounded-[var(--radius-button)] min-h-12 px-6"
               >
-                Explore My Work
+                Explore my work
                 <ArrowRight
                   className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-0.5"
                   aria-hidden="true"
@@ -102,7 +108,7 @@ export const Hero = () => {
                 >
                   <a href={CV_URL} download>
                     <Download className="mr-2 w-4 h-4" aria-hidden="true" />
-                    Download My CV
+                    Download my CV
                   </a>
                 </Button>
               ) : (
@@ -112,50 +118,65 @@ export const Hero = () => {
                   onClick={() => navigate("/contact")}
                   className="rounded-[var(--radius-button)] min-h-12 px-6 border-border text-foreground hover:bg-[color:var(--brand-surface-soft)]"
                 >
-                  Let&rsquo;s Collaborate
+                  Start a conversation
                 </Button>
               )}
             </motion.div>
 
+            {/* Availability supporting text */}
+            <motion.p
+              {...fade(0, 0.3)}
+              className="text-sm text-[color:var(--brand-text-secondary)] mb-10"
+              style={{ maxWidth: "620px" }}
+            >
+              Open to employment, consulting, fellowships, research, speaking
+              and partnerships.
+            </motion.p>
+
             {/* Credibility indicators */}
             <motion.ul
               {...fade(0, 0.3)}
-              aria-label="Areas of focus"
-              className="flex flex-wrap gap-x-6 gap-y-2 mb-8"
+              aria-label="Programme impact indicators"
+              className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-8 max-w-[620px]"
             >
               {credibility.map((item) => (
                 <li
-                  key={item}
-                  className="inline-flex items-center gap-2 text-sm text-[color:var(--brand-text-secondary)]"
+                  key={item.label}
+                  className="border-t border-border pt-3"
                 >
-                  <span
-                    aria-hidden="true"
-                    className="inline-block w-1.5 h-1.5 rounded-full bg-[color:var(--brand-accent)]"
-                  />
-                  {item}
+                  <div className="font-serif-display text-2xl sm:text-3xl text-foreground leading-none">
+                    {item.value}
+                  </div>
+                  <div className="mt-1 text-sm text-[color:var(--brand-text-secondary)]">
+                    {item.label}
+                  </div>
                 </li>
               ))}
             </motion.ul>
 
             {/* Social links */}
-            <ul className="flex gap-2" aria-label="Social profiles">
-              {socialLinks.map(({ icon: Icon, href, label }) => (
-                <li key={label}>
-                  <a
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={label}
-                    className="inline-flex items-center justify-center min-h-11 min-w-11 rounded-[var(--radius-button)] border border-border bg-white text-foreground hover:bg-[color:var(--brand-surface-soft)] transition-colors focus-visible:outline-none"
-                  >
-                    <Icon className="w-5 h-5" aria-hidden="true" />
-                  </a>
-                </li>
-              ))}
+            <ul className="flex flex-wrap gap-2" aria-label="Contact and social profiles">
+              {socialLinks.map(({ icon: Icon, href, label }) => {
+                const isExternal = href.startsWith("http");
+                return (
+                  <li key={label}>
+                    <a
+                      href={href}
+                      {...(isExternal
+                        ? { target: "_blank", rel: "noopener noreferrer" }
+                        : {})}
+                      aria-label={label}
+                      className="inline-flex items-center justify-center min-h-11 min-w-11 rounded-[var(--radius-button)] border border-border bg-white text-foreground hover:bg-[color:var(--brand-surface-soft)] transition-colors focus-visible:outline-none"
+                    >
+                      <Icon className="w-5 h-5" aria-hidden="true" />
+                    </a>
+                  </li>
+                );
+              })}
             </ul>
           </div>
 
-          {/* Portrait — 5 cols on desktop, above copy on mobile per spec */}
+          {/* Portrait */}
           <motion.div
             {...portraitMotion}
             className="lg:col-span-5 order-1 lg:order-2"
@@ -170,7 +191,7 @@ export const Hero = () => {
               >
                 <img
                   src={profileImg}
-                  alt="Portrait of Olanrewaju Harith A., digital literacy and youth development advocate."
+                  alt="Olanrewaju Harith Abolaji in a blue traditional outfit against a dark background."
                   width={800}
                   height={1000}
                   loading="eager"

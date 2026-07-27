@@ -39,6 +39,10 @@ export const About = () => {
   return (
     <section id="about" className="py-20 lg:py-32 relative">
       <div className="section-container">
+        <p className="font-serif-display text-2xl sm:text-3xl lg:text-4xl text-foreground max-w-[42ch] mb-12 leading-snug">
+          Access is a leadership responsibility, not an act of charity.
+        </p>
+
         <SectionHeader
           badge="About Me"
           title="Crafting Technology for Impact"

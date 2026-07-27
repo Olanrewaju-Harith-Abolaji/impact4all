@@ -94,10 +94,10 @@ export const Navbar = () => {
           <div className="flex items-center justify-between h-16 lg:h-20">
             <NavLink
               to="/"
-              className="text-lg lg:text-xl font-semibold tracking-tight text-foreground rounded-md focus-visible:outline-none"
-              aria-label="Olanrewaju Harith A. — Home"
+              className="text-lg lg:text-xl font-semibold tracking-tight text-foreground rounded-md focus-visible:outline-none whitespace-nowrap"
+              aria-label="Olanrewaju Harith Abolaji — Home"
             >
-              Olanrewaju Harith A.
+              Olanrewaju Harith
             </NavLink>
 
             <div className="hidden lg:flex items-center gap-8">
@@ -117,9 +117,9 @@ export const Navbar = () => {
               ))}
               <Button
                 onClick={() => navigate("/contact")}
-                className="bg-primary hover:bg-[hsl(var(--primary-hover))] text-primary-foreground font-medium rounded-[var(--radius-button)] min-h-11 px-5"
+                className="bg-primary hover:bg-[hsl(var(--primary-hover))] text-primary-foreground font-medium rounded-[var(--radius-button)] min-h-11 px-4 text-sm"
               >
-                Work With Me
+                Work with me
               </Button>
             </div>
 

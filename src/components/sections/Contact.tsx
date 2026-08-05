@@ -224,7 +224,7 @@ export const Contact = () => {
                   <h4 className="font-semibold mb-1">Quick Response</h4>
                   <p className="text-sm text-muted-foreground">
                     I typically respond within 24-48 hours. For urgent matters,
-                    reach me on LinkedIn, WhatsApp, or Twitter.
+                    reach me on LinkedIn or WhatsApp.
                   </p>
                 </div>
               </div>

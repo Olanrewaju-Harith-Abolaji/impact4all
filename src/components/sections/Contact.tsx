@@ -234,22 +234,25 @@ export const Contact = () => {
               <h4 className="text-sm font-semibold text-muted-foreground mb-4 uppercase tracking-wider">
                 Connect with me
               </h4>
-              <ul className="flex gap-3" aria-label="Social profiles">
-                {socialLinks.map(({ icon: Icon, href, label }) => (
+              <ul className="flex flex-wrap gap-3" aria-label="Contact and social profiles">
+                {socialLinks.map(({ icon: Icon, href, label }) => {
+                  const isExternal = href.startsWith("http");
+                  return (
                   <li key={label}>
                     <motion.a
                       href={href}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                       whileHover={{ scale: 1.1, y: -2 }}
                       whileTap={{ scale: 0.95 }}
-                      className="w-12 h-12 bg-secondary hover:bg-muted border border-border rounded-xl flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
+                      className="w-12 h-12 min-h-11 min-w-11 bg-secondary hover:bg-muted border border-border rounded-xl flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
                       aria-label={label}
+                      title={label}
                     >
                       <Icon className="w-5 h-5" aria-hidden="true" />
                     </motion.a>
                   </li>
-                ))}
+                  );
+                })}
               </ul>
             </div>
           </motion.div>

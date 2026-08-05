@@ -1,5 +1,5 @@
 import { useReducedMotion, motion } from "framer-motion";
-import { ArrowRight, Download, Github, Linkedin, Twitter, MessageCircle, Mail } from "lucide-react";
+import { ArrowRight, Download, Github, Linkedin, MessageCircle, Mail } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import profileImg from "@/assets/profile.jpg";
@@ -9,21 +9,23 @@ import profileImg from "@/assets/profile.jpg";
 const CV_URL: string | null = null;
 
 const credibility = [
-  { value: "2,500+", label: "young people reached" },
-  { value: "90%", label: "programme completion" },
-  { value: "4,000+", label: "students represented" },
+  { value: "2,500+", label: "Young people reached" },
+  { value: "90%", label: "Programme completion" },
+  { value: "4,000+", label: "Students represented" },
 ];
 
 const WHATSAPP_URL = "https://wa.me/2348133644304";
 const EMAIL_URL = "mailto:haritholanrewaju@gmail.com";
+const LINKEDIN_URL = "https://www.linkedin.com/in/olanrewajuharithabolaji";
+const GITHUB_URL = "https://github.com/Olanrewaju-Harith-Abolaji";
 
 const socialLinks = [
-  { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
-  { icon: Github, href: "https://github.com", label: "GitHub" },
-  { icon: Twitter, href: "https://twitter.com", label: "X (Twitter)" },
-  { icon: MessageCircle, href: WHATSAPP_URL, label: "WhatsApp" },
-  { icon: Mail, href: EMAIL_URL, label: "Email" },
+  { icon: Linkedin, href: LINKEDIN_URL, label: "Visit my LinkedIn profile" },
+  { icon: Github, href: GITHUB_URL, label: "Visit my GitHub profile" },
+  { icon: MessageCircle, href: WHATSAPP_URL, label: "Contact me on WhatsApp" },
+  { icon: Mail, href: EMAIL_URL, label: "Send me an email" },
 ];
+
 
 export const Hero = () => {
   const navigate = useNavigate();

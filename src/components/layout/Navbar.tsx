@@ -100,14 +100,14 @@ export const Navbar = () => {
               Olanrewaju Harith
             </NavLink>
 
-            <div className="hidden lg:flex items-center gap-8">
+            <div className="hidden xl:flex items-center gap-6">
               {navLinks.map((link) => (
                 <NavLink
                   key={link.label}
                   to={link.to}
                   end={link.to === "/"}
                   className={({ isActive }) =>
-                    `nav-link text-[15px] font-medium py-2 rounded-sm focus-visible:outline-none ${
+                    `nav-link whitespace-nowrap text-[15px] font-medium py-2 rounded-sm focus-visible:outline-none ${
                       isActive ? "active" : ""
                     }`
                   }
@@ -126,7 +126,7 @@ export const Navbar = () => {
             <button
               ref={toggleRef}
               onClick={() => setIsMobileMenuOpen((v) => !v)}
-              className="lg:hidden inline-flex items-center justify-center min-h-11 min-w-11 text-foreground rounded-md focus-visible:outline-none"
+              className="xl:hidden inline-flex items-center justify-center min-h-11 min-w-11 text-foreground rounded-md focus-visible:outline-none"
               aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
               aria-expanded={isMobileMenuOpen}
               aria-controls="mobile-menu"
@@ -153,7 +153,7 @@ export const Navbar = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
-            className="fixed inset-0 z-40 lg:hidden bg-[color:var(--brand-background)] pt-20 overflow-y-auto"
+            className="fixed inset-0 z-40 xl:hidden bg-[color:var(--brand-background)] pt-20 overflow-y-auto"
           >
             <div className="section-container py-6">
               <nav aria-label="Mobile primary" className="flex flex-col">

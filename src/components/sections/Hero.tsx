@@ -1,5 +1,5 @@
 import { useReducedMotion, motion } from "framer-motion";
-import { ArrowRight, Download, Github, Linkedin, Twitter, MessageCircle, Mail } from "lucide-react";
+import { ArrowRight, Download, Github, Linkedin, MessageCircle, Mail } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import profileImg from "@/assets/profile.jpg";
@@ -9,21 +9,23 @@ import profileImg from "@/assets/profile.jpg";
 const CV_URL: string | null = null;
 
 const credibility = [
-  { value: "2,500+", label: "young people reached" },
-  { value: "90%", label: "programme completion" },
-  { value: "4,000+", label: "students represented" },
+  { value: "2,500+", label: "Young people reached" },
+  { value: "90%", label: "Programme completion" },
+  { value: "4,000+", label: "Students represented" },
 ];
 
 const WHATSAPP_URL = "https://wa.me/2348133644304";
 const EMAIL_URL = "mailto:haritholanrewaju@gmail.com";
+const LINKEDIN_URL = "https://www.linkedin.com/in/olanrewajuharithabolaji";
+const GITHUB_URL = "https://github.com/Olanrewaju-Harith-Abolaji";
 
 const socialLinks = [
-  { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
-  { icon: Github, href: "https://github.com", label: "GitHub" },
-  { icon: Twitter, href: "https://twitter.com", label: "X (Twitter)" },
-  { icon: MessageCircle, href: WHATSAPP_URL, label: "WhatsApp" },
-  { icon: Mail, href: EMAIL_URL, label: "Email" },
+  { icon: Linkedin, href: LINKEDIN_URL, label: "Visit my LinkedIn profile" },
+  { icon: Github, href: GITHUB_URL, label: "Visit my GitHub profile" },
+  { icon: MessageCircle, href: WHATSAPP_URL, label: "Contact me on WhatsApp" },
+  { icon: Mail, href: EMAIL_URL, label: "Send me an email" },
 ];
+
 
 export const Hero = () => {
   const navigate = useNavigate();
@@ -144,10 +146,11 @@ export const Hero = () => {
                   key={item.label}
                   className="border-t border-border pt-3"
                 >
-                  <div className="font-serif-display text-2xl sm:text-3xl text-foreground leading-none">
+                  <span className="sr-only">{`${item.value} — ${item.label}`}</span>
+                  <div aria-hidden="true" className="font-serif-display text-2xl sm:text-3xl text-foreground leading-none">
                     {item.value}
                   </div>
-                  <div className="mt-1 text-sm text-[color:var(--brand-text-secondary)]">
+                  <div aria-hidden="true" className="mt-1 text-sm text-[color:var(--brand-text-secondary)]">
                     {item.label}
                   </div>
                 </li>
@@ -166,6 +169,7 @@ export const Hero = () => {
                         ? { target: "_blank", rel: "noopener noreferrer" }
                         : {})}
                       aria-label={label}
+                      title={label}
                       className="inline-flex items-center justify-center min-h-11 min-w-11 rounded-[var(--radius-button)] border border-border bg-white text-foreground hover:bg-[color:var(--brand-surface-soft)] transition-colors focus-visible:outline-none"
                     >
                       <Icon className="w-5 h-5" aria-hidden="true" />

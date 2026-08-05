@@ -9,7 +9,7 @@ const projects = [
     description:
       "Machine learning model to predict salaries based on experience, education, and skills. Includes data preprocessing and visualization.",
     tech: ["Python", "Scikit-Learn", "Pandas"],
-    github: "https://github.com",
+    github: "https://github.com/Olanrewaju-Harith-Abolaji",
     featured: true,
     emoji: "💰",
   },
@@ -18,7 +18,7 @@ const projects = [
     description:
       "Predictive analytics solution for forecasting company profits using regression analysis and historical data.",
     tech: ["Python", "NumPy", "Data Analysis"],
-    github: "https://github.com",
+    github: "https://github.com/Olanrewaju-Harith-Abolaji",
     featured: true,
     emoji: "📈",
   },
@@ -27,7 +27,7 @@ const projects = [
     description:
       "Automated data collection and analysis pipeline for gathering insights from web sources.",
     tech: ["Python", "BeautifulSoup", "Pandas"],
-    github: "https://github.com",
+    github: "https://github.com/Olanrewaju-Harith-Abolaji",
     emoji: "🔍",
   },
   {
@@ -35,7 +35,7 @@ const projects = [
     description:
       "Bicycle rental management system designed to streamline operations and enhance user experience.",
     tech: ["Python", "Database", "Management"],
-    github: "https://github.com",
+    github: "https://github.com/Olanrewaju-Harith-Abolaji",
     emoji: "🚲",
   },
 ];

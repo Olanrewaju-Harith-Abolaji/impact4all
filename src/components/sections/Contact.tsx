@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Send, Mail, Github, Linkedin, Twitter, MapPin, CheckCircle, MessageCircle } from "lucide-react";
+import { Send, Mail, Github, Linkedin, MapPin, CheckCircle, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -8,11 +8,10 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 import { useToast } from "@/hooks/use-toast";
 
 const socialLinks = [
-  { icon: Github, href: "https://github.com", label: "GitHub" },
-  { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
-  { icon: Twitter, href: "https://twitter.com", label: "Twitter/X" },
-  { icon: Mail, href: "mailto:haritholanrewaju@gmail.com", label: "Email" },
-  { icon: MessageCircle, href: "https://wa.me/2348133644304", label: "WhatsApp" },
+  { icon: Linkedin, href: "https://www.linkedin.com/in/olanrewajuharithabolaji", label: "Visit my LinkedIn profile" },
+  { icon: Github, href: "https://github.com/Olanrewaju-Harith-Abolaji", label: "Visit my GitHub profile" },
+  { icon: MessageCircle, href: "https://wa.me/2348133644304", label: "Contact me on WhatsApp" },
+  { icon: Mail, href: "mailto:haritholanrewaju@gmail.com", label: "Send me an email" },
 ];
 
 type Errors = Partial<Record<"name" | "email" | "message", string>>;
@@ -225,7 +224,7 @@ export const Contact = () => {
                   <h4 className="font-semibold mb-1">Quick Response</h4>
                   <p className="text-sm text-muted-foreground">
                     I typically respond within 24-48 hours. For urgent matters,
-                    reach me on LinkedIn, WhatsApp, or Twitter.
+                    reach me on LinkedIn or WhatsApp.
                   </p>
                 </div>
               </div>
@@ -235,22 +234,25 @@ export const Contact = () => {
               <h4 className="text-sm font-semibold text-muted-foreground mb-4 uppercase tracking-wider">
                 Connect with me
               </h4>
-              <ul className="flex gap-3" aria-label="Social profiles">
-                {socialLinks.map(({ icon: Icon, href, label }) => (
+              <ul className="flex flex-wrap gap-3" aria-label="Contact and social profiles">
+                {socialLinks.map(({ icon: Icon, href, label }) => {
+                  const isExternal = href.startsWith("http");
+                  return (
                   <li key={label}>
                     <motion.a
                       href={href}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                       whileHover={{ scale: 1.1, y: -2 }}
                       whileTap={{ scale: 0.95 }}
-                      className="w-12 h-12 bg-secondary hover:bg-muted border border-border rounded-xl flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
+                      className="w-12 h-12 min-h-11 min-w-11 bg-secondary hover:bg-muted border border-border rounded-xl flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
                       aria-label={label}
+                      title={label}
                     >
                       <Icon className="w-5 h-5" aria-hidden="true" />
                     </motion.a>
                   </li>
-                ))}
+                  );
+                })}
               </ul>
             </div>
           </motion.div>

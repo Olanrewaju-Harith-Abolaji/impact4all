@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Send, Mail, Github, Linkedin, Twitter, MapPin, CheckCircle, MessageCircle } from "lucide-react";
+import { Send, Mail, Github, Linkedin, MapPin, CheckCircle, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -8,11 +8,10 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 import { useToast } from "@/hooks/use-toast";
 
 const socialLinks = [
-  { icon: Github, href: "https://github.com", label: "GitHub" },
-  { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
-  { icon: Twitter, href: "https://twitter.com", label: "Twitter/X" },
-  { icon: Mail, href: "mailto:haritholanrewaju@gmail.com", label: "Email" },
-  { icon: MessageCircle, href: "https://wa.me/2348133644304", label: "WhatsApp" },
+  { icon: Linkedin, href: "https://www.linkedin.com/in/olanrewajuharithabolaji", label: "Visit my LinkedIn profile" },
+  { icon: Github, href: "https://github.com/Olanrewaju-Harith-Abolaji", label: "Visit my GitHub profile" },
+  { icon: MessageCircle, href: "https://wa.me/2348133644304", label: "Contact me on WhatsApp" },
+  { icon: Mail, href: "mailto:haritholanrewaju@gmail.com", label: "Send me an email" },
 ];
 
 type Errors = Partial<Record<"name" | "email" | "message", string>>;

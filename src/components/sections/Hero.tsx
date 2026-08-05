@@ -146,10 +146,11 @@ export const Hero = () => {
                   key={item.label}
                   className="border-t border-border pt-3"
                 >
-                  <div className="font-serif-display text-2xl sm:text-3xl text-foreground leading-none">
+                  <span className="sr-only">{`${item.value} — ${item.label}`}</span>
+                  <div aria-hidden="true" className="font-serif-display text-2xl sm:text-3xl text-foreground leading-none">
                     {item.value}
                   </div>
-                  <div className="mt-1 text-sm text-[color:var(--brand-text-secondary)]">
+                  <div aria-hidden="true" className="mt-1 text-sm text-[color:var(--brand-text-secondary)]">
                     {item.label}
                   </div>
                 </li>
@@ -168,6 +169,7 @@ export const Hero = () => {
                         ? { target: "_blank", rel: "noopener noreferrer" }
                         : {})}
                       aria-label={label}
+                      title={label}
                       className="inline-flex items-center justify-center min-h-11 min-w-11 rounded-[var(--radius-button)] border border-border bg-white text-foreground hover:bg-[color:var(--brand-surface-soft)] transition-colors focus-visible:outline-none"
                     >
                       <Icon className="w-5 h-5" aria-hidden="true" />

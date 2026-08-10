@@ -111,8 +111,6 @@ export const Contact = () => {
       return;
     }
 
-
-    setErrors({});
     setSubmitError("");
     setIsSubmitting(true);
 

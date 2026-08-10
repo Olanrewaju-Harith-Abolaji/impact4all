@@ -8,6 +8,7 @@ import HomePage from "./pages/HomePage";
 import AboutPage from "./pages/AboutPage";
 import SkillsPage from "./pages/SkillsPage";
 import ProjectsPage from "./pages/ProjectsPage";
+import ProjectDetailPage from "./pages/ProjectDetailPage";
 import InitiativesPage from "./pages/InitiativesPage";
 import ExperiencePage from "./pages/ExperiencePage";
 import AdvocacyPage from "./pages/AdvocacyPage";
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/about" element={<AboutPage />} />
             <Route path="/skills" element={<SkillsPage />} />
             <Route path="/projects" element={<ProjectsPage />} />
+            <Route path="/projects/:slug" element={<ProjectDetailPage />} />
             <Route path="/initiatives" element={<InitiativesPage />} />
             <Route path="/experience" element={<ExperiencePage />} />
             <Route path="/advocacy" element={<AdvocacyPage />} />

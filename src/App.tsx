@@ -8,6 +8,7 @@ import HomePage from "./pages/HomePage";
 import AboutPage from "./pages/AboutPage";
 import SkillsPage from "./pages/SkillsPage";
 import ProjectsPage from "./pages/ProjectsPage";
+import ProjectDetailPage from "./pages/ProjectDetailPage";
 import InitiativesPage from "./pages/InitiativesPage";
 import ExperiencePage from "./pages/ExperiencePage";
 import AdvocacyPage from "./pages/AdvocacyPage";

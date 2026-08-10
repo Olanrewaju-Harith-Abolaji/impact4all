@@ -50,7 +50,7 @@ describe("Contact form accessibility", () => {
 
     expect(screen.getByText(/please enter your name/i)).toBeInTheDocument();
     expect(screen.getByText(/please enter your email/i)).toBeInTheDocument();
-    expect(screen.getByText(/please enter a message/i)).toBeInTheDocument();
+    expect(screen.getByText(/message must be at least 10 characters/i)).toBeInTheDocument();
   });
 
   it("moves focus to the first invalid field on submit", async () => {

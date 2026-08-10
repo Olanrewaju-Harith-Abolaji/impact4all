@@ -1,11 +1,13 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Send, Mail, Github, Linkedin, MapPin, CheckCircle, MessageCircle } from "lucide-react";
+import { Send, Mail, Github, Linkedin, MapPin, CheckCircle, MessageCircle, ShieldCheck } from "lucide-react";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const socialLinks = [
   { icon: Linkedin, href: "https://www.linkedin.com/in/olanrewajuharithabolaji", label: "Visit my LinkedIn profile" },
@@ -14,56 +16,139 @@ const socialLinks = [
   { icon: Mail, href: "mailto:haritholanrewaju@gmail.com", label: "Send me an email" },
 ];
 
-type Errors = Partial<Record<"name" | "email" | "message", string>>;
+const contactSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(2, { message: "Please enter your name (at least 2 characters)." })
+    .max(100, { message: "Name must be less than 100 characters." }),
+  email: z
+    .string()
+    .trim()
+    .min(1, { message: "Please enter your email address." })
+    .email({ message: "Please enter a valid email address." })
+    .max(255, { message: "Email must be less than 255 characters." }),
+  subject: z
+    .string()
+    .trim()
+    .max(150, { message: "Subject must be less than 150 characters." })
+    .optional(),
+  message: z
+    .string()
+    .trim()
+    .min(10, { message: "Message must be at least 10 characters." })
+    .max(2000, { message: "Message must be less than 2000 characters." }),
+});
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+type Field = "name" | "email" | "subject" | "message";
+type Errors = Partial<Record<Field, string>>;
 
-function validate(values: { name: string; email: string; message: string }): Errors {
-  const errors: Errors = {};
-  if (!values.name.trim()) errors.name = "Please enter your name.";
-  if (!values.email.trim()) errors.email = "Please enter your email address.";
-  else if (!EMAIL_RE.test(values.email.trim())) errors.email = "Please enter a valid email address.";
-  if (!values.message.trim()) errors.message = "Please enter a message.";
-  else if (values.message.trim().length < 10) errors.message = "Message must be at least 10 characters.";
-  return errors;
-}
+// Spam protection tuning
+const MIN_FILL_SECONDS = 3; // submissions faster than this are almost certainly bots
+const RESUBMIT_COOLDOWN_MS = 60_000;
+const LAST_SENT_KEY = "contact-last-sent";
 
 export const Contact = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
+  const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
   const [errors, setErrors] = useState<Errors>({});
   const [submitError, setSubmitError] = useState<string>("");
+  const [honeypot, setHoneypot] = useState("");
+  const mountedAt = useRef<number>(Date.now());
   const nameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
+  const subjectRef = useRef<HTMLInputElement>(null);
   const messageRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    mountedAt.current = Date.now();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const nextErrors = validate(formData);
-    setErrors(nextErrors);
-    if (Object.keys(nextErrors).length > 0) {
+
+    // Spam protection 1 — hidden honeypot field. Real users never fill this.
+    if (honeypot.trim()) {
+      setSubmitError("");
+      toast({ title: "Message sent", description: "Thank you for reaching out." });
+      setFormData({ name: "", email: "", subject: "", message: "" });
+      return;
+    }
+
+    const parsed = contactSchema.safeParse(formData);
+    if (!parsed.success) {
+      const fieldErrors = parsed.error.flatten().fieldErrors;
+      const nextErrors: Errors = {
+        name: fieldErrors.name?.[0],
+        email: fieldErrors.email?.[0],
+        subject: fieldErrors.subject?.[0],
+        message: fieldErrors.message?.[0],
+      };
+      setErrors(nextErrors);
       setSubmitError("Please fix the errors below and try again.");
-      // Focus the first invalid field in DOM order
       const firstInvalid =
         (nextErrors.name && nameRef.current) ||
         (nextErrors.email && emailRef.current) ||
+        (nextErrors.subject && subjectRef.current) ||
         (nextErrors.message && messageRef.current);
       firstInvalid?.focus();
       return;
     }
+
+    setErrors({});
+
+    // Spam protection 2 — time trap against instant automated submissions.
+    if (Date.now() - mountedAt.current < MIN_FILL_SECONDS * 1000) {
+      setSubmitError("That was a little too quick. Please take a moment and try again.");
+      return;
+    }
+
+    // Spam protection 3 — client-side cooldown between sends.
+    const lastSent = Number(window.localStorage.getItem(LAST_SENT_KEY) ?? 0);
+    if (lastSent && Date.now() - lastSent < RESUBMIT_COOLDOWN_MS) {
+      setSubmitError("You just sent a message. Please wait a minute before sending another.");
+      return;
+    }
+
     setSubmitError("");
     setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    toast({
-      title: "Message sent! ✨",
-      description: "Thank you for reaching out. I'll get back to you soon!",
-    });
-    setFormData({ name: "", email: "", message: "" });
-    setIsSubmitting(false);
+
+    try {
+      const { error } = await supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "contact-message",
+          recipientEmail: "haritholanrewaju@gmail.com",
+          idempotencyKey: `contact-${Date.now()}-${parsed.data.email}`,
+          templateData: {
+            name: parsed.data.name,
+            email: parsed.data.email,
+            subject: parsed.data.subject || "New message from your website",
+            message: parsed.data.message,
+          },
+        },
+      });
+
+      if (error) throw error;
+
+      window.localStorage.setItem(LAST_SENT_KEY, String(Date.now()));
+      toast({
+        title: "Message sent",
+        description: "Thank you for reaching out. I'll get back to you within 24–48 hours.",
+      });
+      setFormData({ name: "", email: "", subject: "", message: "" });
+      mountedAt.current = Date.now();
+    } catch (err) {
+      console.error("Contact form send failed:", err);
+      setSubmitError(
+        "Sorry, your message could not be sent right now. Please email haritholanrewaju@gmail.com or message me on WhatsApp.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const fieldProps = (field: "name" | "email" | "message") => ({
+  const fieldProps = (field: Field) => ({
     "aria-invalid": errors[field] ? true : undefined,
     "aria-describedby": errors[field] ? `${field}-error` : `${field}-hint`,
   });
@@ -98,6 +183,20 @@ export const Contact = () => {
                 {submitError}
               </div>
 
+              {/* Honeypot — hidden from users, visible to bots */}
+              <div className="hidden" aria-hidden="true">
+                <label htmlFor="company-website">Company website</label>
+                <input
+                  id="company-website"
+                  name="company-website"
+                  type="text"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={honeypot}
+                  onChange={(e) => setHoneypot(e.target.value)}
+                />
+              </div>
+
               <div className="space-y-4">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium mb-2">
@@ -108,10 +207,12 @@ export const Contact = () => {
                     id="name"
                     ref={nameRef}
                     type="text"
+                    autoComplete="name"
                     placeholder="Your name"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     required
+                    maxLength={100}
                     {...fieldProps("name")}
                     className="bg-secondary/50 border-border focus:border-primary"
                   />
@@ -133,10 +234,12 @@ export const Contact = () => {
                     id="email"
                     ref={emailRef}
                     type="email"
+                    autoComplete="email"
                     placeholder="your@email.com"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     required
+                    maxLength={255}
                     {...fieldProps("email")}
                     className="bg-secondary/50 border-border focus:border-primary"
                   />
@@ -150,6 +253,30 @@ export const Contact = () => {
                   )}
                 </div>
                 <div>
+                  <label htmlFor="subject" className="block text-sm font-medium mb-2">
+                    Subject
+                  </label>
+                  <Input
+                    id="subject"
+                    ref={subjectRef}
+                    type="text"
+                    placeholder="Partnership, speaking invitation, mentorship…"
+                    value={formData.subject}
+                    onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                    maxLength={150}
+                    {...fieldProps("subject")}
+                    className="bg-secondary/50 border-border focus:border-primary"
+                  />
+                  <p id="subject-hint" className="mt-1 text-xs text-muted-foreground">
+                    Optional — helps me reply faster.
+                  </p>
+                  {errors.subject && (
+                    <p id="subject-error" role="alert" className="mt-1 text-sm text-destructive">
+                      {errors.subject}
+                    </p>
+                  )}
+                </div>
+                <div>
                   <label htmlFor="message" className="block text-sm font-medium mb-2">
                     Message <span aria-hidden="true">*</span>
                     <span className="sr-only">(required)</span>
@@ -157,16 +284,17 @@ export const Contact = () => {
                   <Textarea
                     id="message"
                     ref={messageRef}
-                    placeholder="Tell me about your project or just say hi..."
+                    placeholder="Tell me about your project, programme or invitation…"
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     required
                     rows={5}
+                    maxLength={2000}
                     {...fieldProps("message")}
                     className="bg-secondary/50 border-border focus:border-primary resize-none"
                   />
                   <p id="message-hint" className="mt-1 text-xs text-muted-foreground">
-                    At least 10 characters.
+                    Between 10 and 2000 characters.
                   </p>
                   {errors.message && (
                     <p id="message-error" role="alert" className="mt-1 text-sm text-destructive">
@@ -175,11 +303,12 @@ export const Contact = () => {
                   )}
                 </div>
               </div>
+
               <Button
                 type="submit"
                 size="lg"
                 disabled={isSubmitting}
-                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold glow-effect"
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
               >
                 {isSubmitting ? (
                   "Sending..."
@@ -190,6 +319,11 @@ export const Contact = () => {
                   </>
                 )}
               </Button>
+
+              <p className="flex items-start gap-2 text-xs text-muted-foreground">
+                <ShieldCheck className="w-4 h-4 mt-0.5 shrink-0" aria-hidden="true" />
+                Protected against spam. Your details are only used to reply to you.
+              </p>
             </form>
           </motion.div>
 

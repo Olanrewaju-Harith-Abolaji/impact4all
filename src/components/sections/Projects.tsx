@@ -1,44 +1,9 @@
 import { motion } from "framer-motion";
-import { ExternalLink, Github, ArrowUpRight } from "lucide-react";
+import { ExternalLink, Github, ArrowUpRight, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { SectionHeader } from "@/components/ui/SectionHeader";
-
-const projects = [
-  {
-    title: "Salary Prediction Model",
-    description:
-      "Machine learning model to predict salaries based on experience, education, and skills. Includes data preprocessing and visualization.",
-    tech: ["Python", "Scikit-Learn", "Pandas"],
-    github: "https://github.com/Olanrewaju-Harith-Abolaji",
-    featured: true,
-    emoji: "💰",
-  },
-  {
-    title: "Company Profit Prediction",
-    description:
-      "Predictive analytics solution for forecasting company profits using regression analysis and historical data.",
-    tech: ["Python", "NumPy", "Data Analysis"],
-    github: "https://github.com/Olanrewaju-Harith-Abolaji",
-    featured: true,
-    emoji: "📈",
-  },
-  {
-    title: "Web Scraping & Analysis",
-    description:
-      "Automated data collection and analysis pipeline for gathering insights from web sources.",
-    tech: ["Python", "BeautifulSoup", "Pandas"],
-    github: "https://github.com/Olanrewaju-Harith-Abolaji",
-    emoji: "🔍",
-  },
-  {
-    title: "Kekecruise",
-    description:
-      "Bicycle rental management system designed to streamline operations and enhance user experience.",
-    tech: ["Python", "Database", "Management"],
-    github: "https://github.com/Olanrewaju-Harith-Abolaji",
-    emoji: "🚲",
-  },
-];
+import { projects } from "@/data/projects";
 
 export const Projects = () => {
   const featuredProjects = projects.filter((p) => p.featured);
@@ -71,26 +36,28 @@ export const Projects = () => {
                   </div>
                   <div className="flex-1">
                     <div className="flex items-start justify-between gap-4 mb-3">
-                      <h3 className="text-xl lg:text-2xl font-bold font-display group-hover:text-primary transition-colors">
-                        {project.title}
+                      <h3 className="text-xl lg:text-2xl font-bold font-display">
+                        <Link to={`/projects/${project.slug}`} className="hover:underline">
+                          {project.title}
+                        </Link>
                       </h3>
                       <div className="flex gap-2 shrink-0">
-                        <motion.a
+                        <a
                           href={project.github}
                           target="_blank"
                           rel="noopener noreferrer"
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="p-2 bg-secondary hover:bg-muted rounded-lg transition-colors"
+                          aria-label={`View ${project.title} on GitHub`}
+                          title={`View ${project.title} on GitHub`}
+                          className="inline-flex items-center justify-center min-h-11 min-w-11 bg-secondary hover:bg-muted rounded-lg transition-colors"
                         >
-                          <Github className="w-5 h-5" />
-                        </motion.a>
+                          <Github className="w-5 h-5" aria-hidden="true" />
+                        </a>
                       </div>
                     </div>
                     <p className="text-muted-foreground mb-4 leading-relaxed">
                       {project.description}
                     </p>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2 mb-5">
                       {project.tech.map((tech) => (
                         <span
                           key={tech}
@@ -100,6 +67,15 @@ export const Projects = () => {
                         </span>
                       ))}
                     </div>
+                    <Button asChild variant="outline" className="group/cta">
+                      <Link to={`/projects/${project.slug}`}>
+                        View case study
+                        <ArrowRight
+                          className="ml-2 w-4 h-4 transition-transform group-hover/cta:translate-x-0.5"
+                          aria-hidden="true"
+                        />
+                      </Link>
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -117,36 +93,32 @@ export const Projects = () => {
           <h3 className="text-xl font-semibold font-display mb-6">Other Projects</h3>
           <div className="grid sm:grid-cols-2 gap-4">
             {otherProjects.map((project, index) => (
-              <motion.a
+              <motion.div
                 key={project.title}
-                href={project.github}
-                target="_blank"
-                rel="noopener noreferrer"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                whileHover={{ y: -4 }}
-                className="card-glass p-5 group cursor-pointer hover:border-primary/30 transition-all"
               >
-                <div className="flex items-start justify-between mb-3">
-                  <span className="text-2xl">{project.emoji}</span>
-                  <ArrowUpRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                </div>
-                <h4 className="font-semibold mb-2 group-hover:text-primary transition-colors">
-                  {project.title}
-                </h4>
-                <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-                  {project.description}
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {project.tech.map((tech) => (
-                    <span key={tech} className="text-xs text-muted-foreground">
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-              </motion.a>
+                <Link
+                  to={`/projects/${project.slug}`}
+                  className="card-glass p-5 group block h-full hover:border-primary/30 transition-all"
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <span className="text-2xl" aria-hidden="true">{project.emoji}</span>
+                    <ArrowUpRight className="w-5 h-5 text-muted-foreground" aria-hidden="true" />
+                  </div>
+                  <h4 className="font-semibold mb-2 group-hover:underline">{project.title}</h4>
+                  <p className="text-sm text-muted-foreground mb-3">{project.summary}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {project.tech.map((tech) => (
+                      <span key={tech} className="text-xs text-muted-foreground">
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                </Link>
+              </motion.div>
             ))}
           </div>
         </motion.div>
@@ -158,9 +130,18 @@ export const Projects = () => {
           viewport={{ once: true }}
           className="text-center"
         >
-          <Button variant="outline" size="lg" className="group">
-            View All Projects on GitHub
-            <ExternalLink className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          <Button asChild variant="outline" size="lg" className="group">
+            <a
+              href="https://github.com/Olanrewaju-Harith-Abolaji"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              View All Projects on GitHub
+              <ExternalLink
+                className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform"
+                aria-hidden="true"
+              />
+            </a>
           </Button>
         </motion.div>
       </div>

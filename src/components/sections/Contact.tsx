@@ -156,6 +156,7 @@ export const Contact = () => {
       if (error) throw error;
 
       window.localStorage.setItem(LAST_SENT_KEY, String(Date.now()));
+      setCooldownLeft(RESUBMIT_COOLDOWN_MS / 1000);
       setSubmitSuccess(
         "Thank you for reaching out. Your message has been sent — I'll reply within 24–48 hours.",
       );
@@ -168,7 +169,7 @@ export const Contact = () => {
       requestAnimationFrame(() => statusRef.current?.focus());
     } catch (err) {
       console.error("Contact form send failed:", err);
-      setSubmitError(
+      failWith(
         "Sorry, your message could not be sent right now. Please email haritholanrewaju@gmail.com or message me on WhatsApp.",
       );
     } finally {

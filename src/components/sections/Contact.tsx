@@ -186,10 +186,32 @@ export const Contact = () => {
               <div
                 role="alert"
                 aria-live="assertive"
-                className={submitError ? "text-sm font-medium text-destructive" : "sr-only"}
+                className={
+                  submitError
+                    ? "flex items-start gap-3 rounded-[var(--radius-button)] border border-destructive/40 bg-destructive/10 p-4 text-sm font-medium text-destructive"
+                    : "sr-only"
+                }
               >
-                {submitError}
+                {submitError && <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" aria-hidden="true" />}
+                <span>{submitError}</span>
               </div>
+
+              {/* Live region for successful submissions */}
+              <div
+                ref={statusRef}
+                tabIndex={submitSuccess ? -1 : undefined}
+                role="status"
+                aria-live="polite"
+                className={
+                  submitSuccess
+                    ? "flex items-start gap-3 rounded-[var(--radius-button)] border border-primary/30 bg-primary/10 p-4 text-sm font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
+                    : "sr-only"
+                }
+              >
+                {submitSuccess && <CheckCircle className="w-5 h-5 shrink-0 mt-0.5 text-primary" aria-hidden="true" />}
+                <span>{submitSuccess}</span>
+              </div>
+
 
               {/* Honeypot — hidden from users, visible to bots */}
               <div className="hidden" aria-hidden="true">

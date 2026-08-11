@@ -377,10 +377,14 @@ export const Contact = () => {
                 type="submit"
                 size="lg"
                 disabled={isSubmitting}
+                aria-busy={isSubmitting}
                 className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
               >
                 {isSubmitting ? (
-                  "Sending..."
+                  <>
+                    <Loader2 className="mr-2 w-4 h-4 animate-spin" aria-hidden="true" />
+                    Sending…
+                  </>
                 ) : (
                   <>
                     Send Message
@@ -388,6 +392,12 @@ export const Contact = () => {
                   </>
                 )}
               </Button>
+
+              {/* Progress announcement kept separate from success/error messaging */}
+              <div role="status" aria-live="polite" className="sr-only">
+                {isSubmitting ? "Sending your message, please wait." : ""}
+              </div>
+
 
               <p className="flex items-start gap-2 text-xs text-muted-foreground">
                 <ShieldCheck className="w-4 h-4 mt-0.5 shrink-0" aria-hidden="true" />

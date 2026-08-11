@@ -205,17 +205,35 @@ export const Contact = () => {
             >
               {/* Live region for form-level submission errors */}
               <div
+                ref={errorRef}
+                tabIndex={submitError ? -1 : undefined}
                 role="alert"
                 aria-live="assertive"
                 className={
                   submitError
-                    ? "flex items-start gap-3 rounded-[var(--radius-button)] border border-destructive/40 bg-destructive/10 p-4 text-sm font-medium text-destructive"
+                    ? "flex items-start gap-3 rounded-[var(--radius-button)] border border-destructive/40 bg-destructive/10 p-4 text-sm font-medium text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
                     : "sr-only"
                 }
               >
                 {submitError && <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" aria-hidden="true" />}
                 <span>{submitError}</span>
               </div>
+
+              {/* Polite countdown while the anti-spam cooldown is active */}
+              <div
+                role="status"
+                aria-live="polite"
+                className={
+                  cooldownLeft > 0
+                    ? "text-xs text-muted-foreground"
+                    : "sr-only"
+                }
+              >
+                {cooldownLeft > 0
+                  ? `You can send another message in ${cooldownLeft} second${cooldownLeft === 1 ? "" : "s"}.`
+                  : ""}
+              </div>
+
 
               {/* Live region for successful submissions */}
               <div

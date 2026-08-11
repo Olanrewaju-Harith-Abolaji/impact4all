@@ -4,9 +4,9 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import profileImg from "@/assets/profile.jpg";
 
-// Set to a real, verified CV URL to switch the secondary CTA to "Download my CV".
-// If null, the secondary CTA falls back to "Start a conversation" → /contact.
-const CV_URL: string | null = null;
+// Verified CV (Google Drive). Opens the PDF in a new tab.
+const CV_URL: string | null =
+  "https://drive.google.com/file/d/1X_Xh0KxP1R_VUR43YPzP05DCKxD9W2Qt/view?usp=sharing";
 
 const credibility = [
   { value: "2,500+", label: "Young people reached" },
@@ -108,9 +108,10 @@ export const Hero = () => {
                   variant="outline"
                   className="rounded-[var(--radius-button)] min-h-12 px-6 border-border text-foreground hover:bg-[color:var(--brand-surface-soft)]"
                 >
-                  <a href={CV_URL} download>
+                  <a href={CV_URL} target="_blank" rel="noopener noreferrer">
                     <Download className="mr-2 w-4 h-4" aria-hidden="true" />
                     Download my CV
+                    <span className="sr-only"> (opens in a new tab)</span>
                   </a>
                 </Button>
               ) : (

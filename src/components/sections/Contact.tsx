@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Send, Mail, Github, Linkedin, MapPin, CheckCircle, MessageCircle, ShieldCheck } from "lucide-react";
+import { Send, Mail, Github, Linkedin, MapPin, CheckCircle, MessageCircle, ShieldCheck, AlertCircle } from "lucide-react";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -54,8 +54,10 @@ export const Contact = () => {
   const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
   const [errors, setErrors] = useState<Errors>({});
   const [submitError, setSubmitError] = useState<string>("");
+  const [submitSuccess, setSubmitSuccess] = useState<string>("");
   const [honeypot, setHoneypot] = useState("");
   const mountedAt = useRef<number>(Date.now());
+  const statusRef = useRef<HTMLDivElement>(null);
   const nameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   const subjectRef = useRef<HTMLInputElement>(null);
@@ -67,10 +69,12 @@ export const Contact = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitSuccess("");
 
     // Spam protection 1 — hidden honeypot field. Real users never fill this.
     if (honeypot.trim()) {
       setSubmitError("");
+      setSubmitSuccess("Thank you for reaching out. Your message has been sent.");
       toast({ title: "Message sent", description: "Thank you for reaching out." });
       setFormData({ name: "", email: "", subject: "", message: "" });
       return;
@@ -132,12 +136,16 @@ export const Contact = () => {
       if (error) throw error;
 
       window.localStorage.setItem(LAST_SENT_KEY, String(Date.now()));
+      setSubmitSuccess(
+        "Thank you for reaching out. Your message has been sent — I'll reply within 24–48 hours.",
+      );
       toast({
         title: "Message sent",
         description: "Thank you for reaching out. I'll get back to you within 24–48 hours.",
       });
       setFormData({ name: "", email: "", subject: "", message: "" });
       mountedAt.current = Date.now();
+      requestAnimationFrame(() => statusRef.current?.focus());
     } catch (err) {
       console.error("Contact form send failed:", err);
       setSubmitError(
@@ -178,10 +186,32 @@ export const Contact = () => {
               <div
                 role="alert"
                 aria-live="assertive"
-                className={submitError ? "text-sm font-medium text-destructive" : "sr-only"}
+                className={
+                  submitError
+                    ? "flex items-start gap-3 rounded-[var(--radius-button)] border border-destructive/40 bg-destructive/10 p-4 text-sm font-medium text-destructive"
+                    : "sr-only"
+                }
               >
-                {submitError}
+                {submitError && <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" aria-hidden="true" />}
+                <span>{submitError}</span>
               </div>
+
+              {/* Live region for successful submissions */}
+              <div
+                ref={statusRef}
+                tabIndex={submitSuccess ? -1 : undefined}
+                role="status"
+                aria-live="polite"
+                className={
+                  submitSuccess
+                    ? "flex items-start gap-3 rounded-[var(--radius-button)] border border-primary/30 bg-primary/10 p-4 text-sm font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
+                    : "sr-only"
+                }
+              >
+                {submitSuccess && <CheckCircle className="w-5 h-5 shrink-0 mt-0.5 text-primary" aria-hidden="true" />}
+                <span>{submitSuccess}</span>
+              </div>
+
 
               {/* Honeypot — hidden from users, visible to bots */}
               <div className="hidden" aria-hidden="true">

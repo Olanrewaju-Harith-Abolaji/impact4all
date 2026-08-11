@@ -69,6 +69,20 @@ export const Contact = () => {
     mountedAt.current = Date.now();
   }, []);
 
+  // Live countdown while the resubmit cooldown is active.
+  useEffect(() => {
+    if (cooldownLeft <= 0) return;
+    const id = window.setInterval(() => {
+      setCooldownLeft((s) => (s <= 1 ? 0 : s - 1));
+    }, 1000);
+    return () => window.clearInterval(id);
+  }, [cooldownLeft]);
+
+  const failWith = (message: string) => {
+    setSubmitError(message);
+    requestAnimationFrame(() => errorRef.current?.focus());
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitSuccess("");

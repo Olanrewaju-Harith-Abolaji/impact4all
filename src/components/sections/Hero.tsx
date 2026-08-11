@@ -4,9 +4,9 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import profileImg from "@/assets/profile.jpg";
 
-// Set to a real, verified CV URL to switch the secondary CTA to "Download my CV".
-// If null, the secondary CTA falls back to "Start a conversation" → /contact.
-const CV_URL: string | null = null;
+// Verified CV (Google Drive). Opens the PDF in a new tab.
+const CV_URL: string | null =
+  "https://drive.google.com/file/d/1X_Xh0KxP1R_VUR43YPzP05DCKxD9W2Qt/view?usp=sharing";
 
 const credibility = [
   { value: "2,500+", label: "Young people reached" },

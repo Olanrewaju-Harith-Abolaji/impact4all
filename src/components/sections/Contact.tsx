@@ -136,12 +136,16 @@ export const Contact = () => {
       if (error) throw error;
 
       window.localStorage.setItem(LAST_SENT_KEY, String(Date.now()));
+      setSubmitSuccess(
+        "Thank you for reaching out. Your message has been sent — I'll reply within 24–48 hours.",
+      );
       toast({
         title: "Message sent",
         description: "Thank you for reaching out. I'll get back to you within 24–48 hours.",
       });
       setFormData({ name: "", email: "", subject: "", message: "" });
       mountedAt.current = Date.now();
+      requestAnimationFrame(() => statusRef.current?.focus());
     } catch (err) {
       console.error("Contact form send failed:", err);
       setSubmitError(

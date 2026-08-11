@@ -120,14 +120,18 @@ export const Contact = () => {
 
     // Spam protection 2 — time trap against instant automated submissions.
     if (Date.now() - mountedAt.current < MIN_FILL_SECONDS * 1000) {
-      setSubmitError("That was a little too quick. Please take a moment and try again.");
+      failWith("That was a little too quick. Please take a moment and try again.");
       return;
     }
 
     // Spam protection 3 — client-side cooldown between sends.
     const lastSent = Number(window.localStorage.getItem(LAST_SENT_KEY) ?? 0);
     if (lastSent && Date.now() - lastSent < RESUBMIT_COOLDOWN_MS) {
-      setSubmitError("You just sent a message. Please wait a minute before sending another.");
+      const remaining = Math.ceil((RESUBMIT_COOLDOWN_MS - (Date.now() - lastSent)) / 1000);
+      setCooldownLeft(remaining);
+      failWith(
+        `You've just sent a message. To protect against spam, you can send another in ${remaining} second${remaining === 1 ? "" : "s"}.`,
+      );
       return;
     }
 

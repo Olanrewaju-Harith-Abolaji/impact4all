@@ -108,9 +108,10 @@ export const Hero = () => {
                   variant="outline"
                   className="rounded-[var(--radius-button)] min-h-12 px-6 border-border text-foreground hover:bg-[color:var(--brand-surface-soft)]"
                 >
-                  <a href={CV_URL} download>
+                  <a href={CV_URL} target="_blank" rel="noopener noreferrer">
                     <Download className="mr-2 w-4 h-4" aria-hidden="true" />
                     Download my CV
+                    <span className="sr-only"> (opens in a new tab)</span>
                   </a>
                 </Button>
               ) : (

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Send, Mail, Github, Linkedin, MapPin, CheckCircle, MessageCircle, ShieldCheck, AlertCircle } from "lucide-react";
+import { Send, Mail, Github, Linkedin, MapPin, CheckCircle, MessageCircle, ShieldCheck, AlertCircle, Loader2 } from "lucide-react";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -56,8 +56,10 @@ export const Contact = () => {
   const [submitError, setSubmitError] = useState<string>("");
   const [submitSuccess, setSubmitSuccess] = useState<string>("");
   const [honeypot, setHoneypot] = useState("");
+  const [cooldownLeft, setCooldownLeft] = useState(0);
   const mountedAt = useRef<number>(Date.now());
   const statusRef = useRef<HTMLDivElement>(null);
+  const errorRef = useRef<HTMLDivElement>(null);
   const nameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   const subjectRef = useRef<HTMLInputElement>(null);

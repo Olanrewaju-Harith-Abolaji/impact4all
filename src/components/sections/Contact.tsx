@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Send, Mail, Github, Linkedin, MapPin, CheckCircle, MessageCircle, ShieldCheck, AlertCircle } from "lucide-react";
+import { Send, Mail, Github, Linkedin, MapPin, CheckCircle, MessageCircle, ShieldCheck, AlertCircle, Loader2 } from "lucide-react";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -56,8 +56,10 @@ export const Contact = () => {
   const [submitError, setSubmitError] = useState<string>("");
   const [submitSuccess, setSubmitSuccess] = useState<string>("");
   const [honeypot, setHoneypot] = useState("");
+  const [cooldownLeft, setCooldownLeft] = useState(0);
   const mountedAt = useRef<number>(Date.now());
   const statusRef = useRef<HTMLDivElement>(null);
+  const errorRef = useRef<HTMLDivElement>(null);
   const nameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   const subjectRef = useRef<HTMLInputElement>(null);
@@ -66,6 +68,20 @@ export const Contact = () => {
   useEffect(() => {
     mountedAt.current = Date.now();
   }, []);
+
+  // Live countdown while the resubmit cooldown is active.
+  useEffect(() => {
+    if (cooldownLeft <= 0) return;
+    const id = window.setInterval(() => {
+      setCooldownLeft((s) => (s <= 1 ? 0 : s - 1));
+    }, 1000);
+    return () => window.clearInterval(id);
+  }, [cooldownLeft]);
+
+  const failWith = (message: string) => {
+    setSubmitError(message);
+    requestAnimationFrame(() => errorRef.current?.focus());
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -104,14 +120,18 @@ export const Contact = () => {
 
     // Spam protection 2 — time trap against instant automated submissions.
     if (Date.now() - mountedAt.current < MIN_FILL_SECONDS * 1000) {
-      setSubmitError("That was a little too quick. Please take a moment and try again.");
+      failWith("That was a little too quick. Please take a moment and try again.");
       return;
     }
 
     // Spam protection 3 — client-side cooldown between sends.
     const lastSent = Number(window.localStorage.getItem(LAST_SENT_KEY) ?? 0);
     if (lastSent && Date.now() - lastSent < RESUBMIT_COOLDOWN_MS) {
-      setSubmitError("You just sent a message. Please wait a minute before sending another.");
+      const remaining = Math.ceil((RESUBMIT_COOLDOWN_MS - (Date.now() - lastSent)) / 1000);
+      setCooldownLeft(remaining);
+      failWith(
+        `You've just sent a message. To protect against spam, you can send another in ${remaining} second${remaining === 1 ? "" : "s"}.`,
+      );
       return;
     }
 
@@ -136,6 +156,7 @@ export const Contact = () => {
       if (error) throw error;
 
       window.localStorage.setItem(LAST_SENT_KEY, String(Date.now()));
+      setCooldownLeft(RESUBMIT_COOLDOWN_MS / 1000);
       setSubmitSuccess(
         "Thank you for reaching out. Your message has been sent — I'll reply within 24–48 hours.",
       );
@@ -148,7 +169,7 @@ export const Contact = () => {
       requestAnimationFrame(() => statusRef.current?.focus());
     } catch (err) {
       console.error("Contact form send failed:", err);
-      setSubmitError(
+      failWith(
         "Sorry, your message could not be sent right now. Please email haritholanrewaju@gmail.com or message me on WhatsApp.",
       );
     } finally {
@@ -184,17 +205,35 @@ export const Contact = () => {
             >
               {/* Live region for form-level submission errors */}
               <div
+                ref={errorRef}
+                tabIndex={submitError ? -1 : undefined}
                 role="alert"
                 aria-live="assertive"
                 className={
                   submitError
-                    ? "flex items-start gap-3 rounded-[var(--radius-button)] border border-destructive/40 bg-destructive/10 p-4 text-sm font-medium text-destructive"
+                    ? "flex items-start gap-3 rounded-[var(--radius-button)] border border-destructive/40 bg-destructive/10 p-4 text-sm font-medium text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
                     : "sr-only"
                 }
               >
                 {submitError && <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" aria-hidden="true" />}
                 <span>{submitError}</span>
               </div>
+
+              {/* Polite countdown while the anti-spam cooldown is active */}
+              <div
+                role="status"
+                aria-live="polite"
+                className={
+                  cooldownLeft > 0
+                    ? "text-xs text-muted-foreground"
+                    : "sr-only"
+                }
+              >
+                {cooldownLeft > 0
+                  ? `You can send another message in ${cooldownLeft} second${cooldownLeft === 1 ? "" : "s"}.`
+                  : ""}
+              </div>
+
 
               {/* Live region for successful submissions */}
               <div
@@ -338,10 +377,14 @@ export const Contact = () => {
                 type="submit"
                 size="lg"
                 disabled={isSubmitting}
+                aria-busy={isSubmitting}
                 className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
               >
                 {isSubmitting ? (
-                  "Sending..."
+                  <>
+                    <Loader2 className="mr-2 w-4 h-4 animate-spin" aria-hidden="true" />
+                    Sending…
+                  </>
                 ) : (
                   <>
                     Send Message
@@ -349,6 +392,12 @@ export const Contact = () => {
                   </>
                 )}
               </Button>
+
+              {/* Progress announcement kept separate from success/error messaging */}
+              <div role="status" aria-live="polite" className="sr-only">
+                {isSubmitting ? "Sending your message, please wait." : ""}
+              </div>
+
 
               <p className="flex items-start gap-2 text-xs text-muted-foreground">
                 <ShieldCheck className="w-4 h-4 mt-0.5 shrink-0" aria-hidden="true" />

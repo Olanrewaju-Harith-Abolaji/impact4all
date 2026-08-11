@@ -69,10 +69,12 @@ export const Contact = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitSuccess("");
 
     // Spam protection 1 — hidden honeypot field. Real users never fill this.
     if (honeypot.trim()) {
       setSubmitError("");
+      setSubmitSuccess("Thank you for reaching out. Your message has been sent.");
       toast({ title: "Message sent", description: "Thank you for reaching out." });
       setFormData({ name: "", email: "", subject: "", message: "" });
       return;

@@ -130,8 +130,19 @@ export const Contact = () => {
     setErrors((prev) => ({ ...prev, [field]: validateAll()[field] }));
   };
 
-  const showError = (field: Field) =>
-    Boolean(errors[field]) && (submitAttempted || touched[field]);
+  const showError = (field: Field) => {
+    // The message limit is enforced live so the counter and error stay in sync.
+    if (field === "message" && formData.message.length > MESSAGE_MAX) return true;
+    return Boolean(errors[field]) && (submitAttempted || touched[field]);
+  };
+
+  const errorText = (field: Field) => {
+    if (field === "message" && formData.message.length > MESSAGE_MAX) {
+      const over = formData.message.length - MESSAGE_MAX;
+      return `Your message is ${over} character${over === 1 ? "" : "s"} over the ${MESSAGE_MAX}-character limit. Please shorten it.`;
+    }
+    return errors[field];
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -352,9 +363,9 @@ export const Contact = () => {
                   <p id="name-hint" className="mt-1 text-xs text-muted-foreground">
                     Your full name.
                   </p>
-                  {errors.name && (
+                  {showError("name") && (
                     <p id="name-error" role="alert" className="mt-1 text-sm text-destructive">
-                      {errors.name}
+                      {errorText("name")}
                     </p>
                   )}
                 </div>
@@ -379,9 +390,9 @@ export const Contact = () => {
                   <p id="email-hint" className="mt-1 text-xs text-muted-foreground">
                     We'll only use this to reply to you.
                   </p>
-                  {errors.email && (
+                  {showError("email") && (
                     <p id="email-error" role="alert" className="mt-1 text-sm text-destructive">
-                      {errors.email}
+                      {errorText("email")}
                     </p>
                   )}
                 </div>
@@ -403,9 +414,9 @@ export const Contact = () => {
                   <p id="subject-hint" className="mt-1 text-xs text-muted-foreground">
                     Optional — helps me reply faster.
                   </p>
-                  {errors.subject && (
+                  {showError("subject") && (
                     <p id="subject-error" role="alert" className="mt-1 text-sm text-destructive">
-                      {errors.subject}
+                      {errorText("subject")}
                     </p>
                   )}
                 </div>
@@ -422,16 +433,32 @@ export const Contact = () => {
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     required
                     rows={5}
-                    maxLength={2000}
                     {...fieldProps("message")}
                     className="bg-secondary/50 border-border focus:border-primary resize-none"
                   />
-                  <p id="message-hint" className="mt-1 text-xs text-muted-foreground">
-                    Between 10 and 2000 characters.
-                  </p>
-                  {errors.message && (
+                  <div className="mt-1 flex items-start justify-between gap-3">
+                    <p id="message-hint" className="text-xs text-muted-foreground">
+                      Between 10 and {MESSAGE_MAX} characters.
+                    </p>
+                    <p
+                      aria-live="polite"
+                      className={
+                        messageOverLimit
+                          ? "shrink-0 text-xs font-medium text-destructive"
+                          : messageLength >= MESSAGE_WARN_AT
+                            ? "shrink-0 text-xs font-medium text-foreground"
+                            : "shrink-0 text-xs text-muted-foreground"
+                      }
+                    >
+                      {messageOverLimit
+                        ? `${Math.abs(messageRemaining)} character${Math.abs(messageRemaining) === 1 ? "" : "s"} over limit`
+                        : `${messageRemaining} character${messageRemaining === 1 ? "" : "s"} remaining`}
+                      <span className="sr-only"> of {MESSAGE_MAX} allowed</span>
+                    </p>
+                  </div>
+                  {showError("message") && (
                     <p id="message-error" role="alert" className="mt-1 text-sm text-destructive">
-                      {errors.message}
+                      {errorText("message")}
                     </p>
                   )}
                 </div>

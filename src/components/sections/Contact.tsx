@@ -42,11 +42,38 @@ const contactSchema = z.object({
 
 type Field = "name" | "email" | "subject" | "message";
 type Errors = Partial<Record<Field, string>>;
+type Touched = Partial<Record<Field, boolean>>;
 
 // Spam protection tuning
 const MIN_FILL_SECONDS = 3; // submissions faster than this are almost certainly bots
 const RESUBMIT_COOLDOWN_MS = 60_000;
 const LAST_SENT_KEY = "contact-last-sent";
+const MESSAGE_MAX = 2000;
+const MESSAGE_WARN_AT = 1800;
+
+/** Pull a Retry-After value (seconds, or HTTP date) out of a failed function response. */
+const readRetryAfter = async (err: unknown): Promise<number | null> => {
+  const res = (err as { context?: Response })?.context;
+  const header = res?.headers?.get?.("retry-after");
+  let raw: string | number | null | undefined = header;
+
+  if (!raw && res && typeof res.clone === "function") {
+    try {
+      const body = await res.clone().json();
+      raw = body?.retryAfter ?? body?.retry_after ?? null;
+    } catch {
+      raw = null;
+    }
+  }
+  if (raw === null || raw === undefined || raw === "") return null;
+
+  const asNumber = Number(raw);
+  if (Number.isFinite(asNumber)) return Math.max(0, Math.ceil(asNumber));
+
+  const asDate = Date.parse(String(raw));
+  if (!Number.isNaN(asDate)) return Math.max(0, Math.ceil((asDate - Date.now()) / 1000));
+  return null;
+};
 
 export const Contact = () => {
   const { toast } = useToast();

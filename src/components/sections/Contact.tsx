@@ -210,21 +210,40 @@ export const Contact = () => {
         description: "Thank you for reaching out. I'll get back to you within 24–48 hours.",
       });
       setFormData({ name: "", email: "", subject: "", message: "" });
+      setTouched({});
+      setSubmitAttempted(false);
       mountedAt.current = Date.now();
       requestAnimationFrame(() => statusRef.current?.focus());
     } catch (err) {
       console.error("Contact form send failed:", err);
+
+      // Server-side rate limiting — surface the exact Retry-After wait time.
+      const retryAfter = await readRetryAfter(err);
+      if (retryAfter !== null) {
+        setCooldownLeft(retryAfter);
+        failWith(
+          `Too many messages sent. To protect against spam, please try again in ${retryAfter} second${retryAfter === 1 ? "" : "s"}. Your message has been kept.`,
+        );
+        return;
+      }
+
+      // Entered values are intentionally kept so nothing has to be retyped.
       failWith(
-        "Sorry, your message could not be sent right now. Please email haritholanrewaju@gmail.com or message me on WhatsApp.",
+        "Sorry, your message could not be sent right now. Your details have been kept — please try again, email haritholanrewaju@gmail.com or message me on WhatsApp.",
       );
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const messageLength = formData.message.length;
+  const messageRemaining = MESSAGE_MAX - messageLength;
+  const messageOverLimit = messageRemaining < 0;
+
   const fieldProps = (field: Field) => ({
-    "aria-invalid": errors[field] ? true : undefined,
-    "aria-describedby": errors[field] ? `${field}-error` : `${field}-hint`,
+    onBlur: () => handleBlur(field),
+    "aria-invalid": showError(field) ? true : undefined,
+    "aria-describedby": showError(field) ? `${field}-error` : `${field}-hint`,
   });
 
   return (

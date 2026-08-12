@@ -80,6 +80,8 @@ export const Contact = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
   const [errors, setErrors] = useState<Errors>({});
+  const [touched, setTouched] = useState<Touched>({});
+  const [submitAttempted, setSubmitAttempted] = useState(false);
   const [submitError, setSubmitError] = useState<string>("");
   const [submitSuccess, setSubmitSuccess] = useState<string>("");
   const [honeypot, setHoneypot] = useState("");

@@ -112,9 +112,31 @@ export const Contact = () => {
     requestAnimationFrame(() => errorRef.current?.focus());
   };
 
+  const validateAll = (): Errors => {
+    const parsed = contactSchema.safeParse(formData);
+    if (parsed.success) return {};
+    const fieldErrors = parsed.error.flatten().fieldErrors;
+    return {
+      name: fieldErrors.name?.[0],
+      email: fieldErrors.email?.[0],
+      subject: fieldErrors.subject?.[0],
+      message: fieldErrors.message?.[0],
+    };
+  };
+
+  // Validate a single field on blur so errors appear only once a field is touched.
+  const handleBlur = (field: Field) => {
+    setTouched((t) => ({ ...t, [field]: true }));
+    setErrors((prev) => ({ ...prev, [field]: validateAll()[field] }));
+  };
+
+  const showError = (field: Field) =>
+    Boolean(errors[field]) && (submitAttempted || touched[field]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitSuccess("");
+    setSubmitAttempted(true);
 
     // Spam protection 1 — hidden honeypot field. Real users never fill this.
     if (honeypot.trim()) {
@@ -127,13 +149,7 @@ export const Contact = () => {
 
     const parsed = contactSchema.safeParse(formData);
     if (!parsed.success) {
-      const fieldErrors = parsed.error.flatten().fieldErrors;
-      const nextErrors: Errors = {
-        name: fieldErrors.name?.[0],
-        email: fieldErrors.email?.[0],
-        subject: fieldErrors.subject?.[0],
-        message: fieldErrors.message?.[0],
-      };
+      const nextErrors = validateAll();
       setErrors(nextErrors);
       setSubmitError("Please fix the errors below and try again.");
       const firstInvalid =

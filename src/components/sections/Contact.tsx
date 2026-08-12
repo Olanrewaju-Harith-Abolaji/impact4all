@@ -42,17 +42,46 @@ const contactSchema = z.object({
 
 type Field = "name" | "email" | "subject" | "message";
 type Errors = Partial<Record<Field, string>>;
+type Touched = Partial<Record<Field, boolean>>;
 
 // Spam protection tuning
 const MIN_FILL_SECONDS = 3; // submissions faster than this are almost certainly bots
 const RESUBMIT_COOLDOWN_MS = 60_000;
 const LAST_SENT_KEY = "contact-last-sent";
+const MESSAGE_MAX = 2000;
+const MESSAGE_WARN_AT = 1800;
+
+/** Pull a Retry-After value (seconds, or HTTP date) out of a failed function response. */
+const readRetryAfter = async (err: unknown): Promise<number | null> => {
+  const res = (err as { context?: Response })?.context;
+  const header = res?.headers?.get?.("retry-after");
+  let raw: string | number | null | undefined = header;
+
+  if (!raw && res && typeof res.clone === "function") {
+    try {
+      const body = await res.clone().json();
+      raw = body?.retryAfter ?? body?.retry_after ?? null;
+    } catch {
+      raw = null;
+    }
+  }
+  if (raw === null || raw === undefined || raw === "") return null;
+
+  const asNumber = Number(raw);
+  if (Number.isFinite(asNumber)) return Math.max(0, Math.ceil(asNumber));
+
+  const asDate = Date.parse(String(raw));
+  if (!Number.isNaN(asDate)) return Math.max(0, Math.ceil((asDate - Date.now()) / 1000));
+  return null;
+};
 
 export const Contact = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
   const [errors, setErrors] = useState<Errors>({});
+  const [touched, setTouched] = useState<Touched>({});
+  const [submitAttempted, setSubmitAttempted] = useState(false);
   const [submitError, setSubmitError] = useState<string>("");
   const [submitSuccess, setSubmitSuccess] = useState<string>("");
   const [honeypot, setHoneypot] = useState("");
@@ -83,9 +112,42 @@ export const Contact = () => {
     requestAnimationFrame(() => errorRef.current?.focus());
   };
 
+  const validateAll = (): Errors => {
+    const parsed = contactSchema.safeParse(formData);
+    if (parsed.success) return {};
+    const fieldErrors = parsed.error.flatten().fieldErrors;
+    return {
+      name: fieldErrors.name?.[0],
+      email: fieldErrors.email?.[0],
+      subject: fieldErrors.subject?.[0],
+      message: fieldErrors.message?.[0],
+    };
+  };
+
+  // Validate a single field on blur so errors appear only once a field is touched.
+  const handleBlur = (field: Field) => {
+    setTouched((t) => ({ ...t, [field]: true }));
+    setErrors((prev) => ({ ...prev, [field]: validateAll()[field] }));
+  };
+
+  const showError = (field: Field) => {
+    // The message limit is enforced live so the counter and error stay in sync.
+    if (field === "message" && formData.message.length > MESSAGE_MAX) return true;
+    return Boolean(errors[field]) && (submitAttempted || touched[field]);
+  };
+
+  const errorText = (field: Field) => {
+    if (field === "message" && formData.message.length > MESSAGE_MAX) {
+      const over = formData.message.length - MESSAGE_MAX;
+      return `Your message is ${over} character${over === 1 ? "" : "s"} over the ${MESSAGE_MAX}-character limit. Please shorten it.`;
+    }
+    return errors[field];
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitSuccess("");
+    setSubmitAttempted(true);
 
     // Spam protection 1 — hidden honeypot field. Real users never fill this.
     if (honeypot.trim()) {
@@ -98,13 +160,7 @@ export const Contact = () => {
 
     const parsed = contactSchema.safeParse(formData);
     if (!parsed.success) {
-      const fieldErrors = parsed.error.flatten().fieldErrors;
-      const nextErrors: Errors = {
-        name: fieldErrors.name?.[0],
-        email: fieldErrors.email?.[0],
-        subject: fieldErrors.subject?.[0],
-        message: fieldErrors.message?.[0],
-      };
+      const nextErrors = validateAll();
       setErrors(nextErrors);
       setSubmitError("Please fix the errors below and try again.");
       const firstInvalid =
@@ -165,21 +221,40 @@ export const Contact = () => {
         description: "Thank you for reaching out. I'll get back to you within 24–48 hours.",
       });
       setFormData({ name: "", email: "", subject: "", message: "" });
+      setTouched({});
+      setSubmitAttempted(false);
       mountedAt.current = Date.now();
       requestAnimationFrame(() => statusRef.current?.focus());
     } catch (err) {
       console.error("Contact form send failed:", err);
+
+      // Server-side rate limiting — surface the exact Retry-After wait time.
+      const retryAfter = await readRetryAfter(err);
+      if (retryAfter !== null) {
+        setCooldownLeft(retryAfter);
+        failWith(
+          `Too many messages sent. To protect against spam, please try again in ${retryAfter} second${retryAfter === 1 ? "" : "s"}. Your message has been kept.`,
+        );
+        return;
+      }
+
+      // Entered values are intentionally kept so nothing has to be retyped.
       failWith(
-        "Sorry, your message could not be sent right now. Please email haritholanrewaju@gmail.com or message me on WhatsApp.",
+        "Sorry, your message could not be sent right now. Your details have been kept — please try again, email haritholanrewaju@gmail.com or message me on WhatsApp.",
       );
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const messageLength = formData.message.length;
+  const messageRemaining = MESSAGE_MAX - messageLength;
+  const messageOverLimit = messageRemaining < 0;
+
   const fieldProps = (field: Field) => ({
-    "aria-invalid": errors[field] ? true : undefined,
-    "aria-describedby": errors[field] ? `${field}-error` : `${field}-hint`,
+    onBlur: () => handleBlur(field),
+    "aria-invalid": showError(field) ? true : undefined,
+    "aria-describedby": showError(field) ? `${field}-error` : `${field}-hint`,
   });
 
   return (
@@ -288,9 +363,9 @@ export const Contact = () => {
                   <p id="name-hint" className="mt-1 text-xs text-muted-foreground">
                     Your full name.
                   </p>
-                  {errors.name && (
+                  {showError("name") && (
                     <p id="name-error" role="alert" className="mt-1 text-sm text-destructive">
-                      {errors.name}
+                      {errorText("name")}
                     </p>
                   )}
                 </div>
@@ -315,9 +390,9 @@ export const Contact = () => {
                   <p id="email-hint" className="mt-1 text-xs text-muted-foreground">
                     We'll only use this to reply to you.
                   </p>
-                  {errors.email && (
+                  {showError("email") && (
                     <p id="email-error" role="alert" className="mt-1 text-sm text-destructive">
-                      {errors.email}
+                      {errorText("email")}
                     </p>
                   )}
                 </div>
@@ -339,9 +414,9 @@ export const Contact = () => {
                   <p id="subject-hint" className="mt-1 text-xs text-muted-foreground">
                     Optional — helps me reply faster.
                   </p>
-                  {errors.subject && (
+                  {showError("subject") && (
                     <p id="subject-error" role="alert" className="mt-1 text-sm text-destructive">
-                      {errors.subject}
+                      {errorText("subject")}
                     </p>
                   )}
                 </div>
@@ -358,16 +433,32 @@ export const Contact = () => {
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     required
                     rows={5}
-                    maxLength={2000}
                     {...fieldProps("message")}
                     className="bg-secondary/50 border-border focus:border-primary resize-none"
                   />
-                  <p id="message-hint" className="mt-1 text-xs text-muted-foreground">
-                    Between 10 and 2000 characters.
-                  </p>
-                  {errors.message && (
+                  <div className="mt-1 flex items-start justify-between gap-3">
+                    <p id="message-hint" className="text-xs text-muted-foreground">
+                      Between 10 and {MESSAGE_MAX} characters.
+                    </p>
+                    <p
+                      aria-live="polite"
+                      className={
+                        messageOverLimit
+                          ? "shrink-0 text-xs font-medium text-destructive"
+                          : messageLength >= MESSAGE_WARN_AT
+                            ? "shrink-0 text-xs font-medium text-foreground"
+                            : "shrink-0 text-xs text-muted-foreground"
+                      }
+                    >
+                      {messageOverLimit
+                        ? `${Math.abs(messageRemaining)} character${Math.abs(messageRemaining) === 1 ? "" : "s"} over limit`
+                        : `${messageRemaining} character${messageRemaining === 1 ? "" : "s"} remaining`}
+                      <span className="sr-only"> of {MESSAGE_MAX} allowed</span>
+                    </p>
+                  </div>
+                  {showError("message") && (
                     <p id="message-error" role="alert" className="mt-1 text-sm text-destructive">
-                      {errors.message}
+                      {errorText("message")}
                     </p>
                   )}
                 </div>

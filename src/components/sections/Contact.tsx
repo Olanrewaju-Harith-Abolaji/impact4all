@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Send, Mail, Github, Linkedin, MapPin, CheckCircle, MessageCircle, ShieldCheck, AlertCircle, Loader2 } from "lucide-react";
+import { Send, Mail, Github, Linkedin, MapPin, CheckCircle, MessageCircle, ShieldCheck, AlertCircle, Loader2, Clock, Save } from "lucide-react";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -48,8 +48,39 @@ type Touched = Partial<Record<Field, boolean>>;
 const MIN_FILL_SECONDS = 3; // submissions faster than this are almost certainly bots
 const RESUBMIT_COOLDOWN_MS = 60_000;
 const LAST_SENT_KEY = "contact-last-sent";
+const DRAFT_KEY = "contact-draft";
 const MESSAGE_MAX = 2000;
 const MESSAGE_WARN_AT = 1800;
+
+const EMPTY_FORM = { name: "", email: "", subject: "", message: "" };
+
+/** Restore a previously auto-saved draft so refreshing never loses typing. */
+const loadDraft = (): typeof EMPTY_FORM => {
+  try {
+    const raw = window.localStorage.getItem(DRAFT_KEY);
+    if (!raw) return EMPTY_FORM;
+    const parsed = JSON.parse(raw);
+    return {
+      name: typeof parsed?.name === "string" ? parsed.name : "",
+      email: typeof parsed?.email === "string" ? parsed.email : "",
+      subject: typeof parsed?.subject === "string" ? parsed.subject : "",
+      message: typeof parsed?.message === "string" ? parsed.message : "",
+    };
+  } catch {
+    return EMPTY_FORM;
+  }
+};
+
+/** Human-readable submission reference, e.g. MSG-8QK3R-4F7A. */
+const makeReference = () => {
+  const stamp = Date.now().toString(36).toUpperCase();
+  const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
+  return `MSG-${stamp}-${rand}`;
+};
+
+const formatStamp = (date: Date) =>
+  date.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
+
 
 /** Pull a Retry-After value (seconds, or HTTP date) out of a failed function response. */
 const readRetryAfter = async (err: unknown): Promise<number | null> => {
@@ -78,12 +109,14 @@ const readRetryAfter = async (err: unknown): Promise<number | null> => {
 export const Contact = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
+  const [formData, setFormData] = useState(loadDraft);
   const [errors, setErrors] = useState<Errors>({});
   const [touched, setTouched] = useState<Touched>({});
   const [submitAttempted, setSubmitAttempted] = useState(false);
   const [submitError, setSubmitError] = useState<string>("");
   const [submitSuccess, setSubmitSuccess] = useState<string>("");
+  const [receipt, setReceipt] = useState<{ reference: string; stamp: string } | null>(null);
+  const [draftRestored, setDraftRestored] = useState(false);
   const [honeypot, setHoneypot] = useState("");
   const [cooldownLeft, setCooldownLeft] = useState(0);
   const mountedAt = useRef<number>(Date.now());
@@ -96,7 +129,23 @@ export const Contact = () => {
 
   useEffect(() => {
     mountedAt.current = Date.now();
+    const draft = loadDraft();
+    if (draft.name || draft.email || draft.subject || draft.message) setDraftRestored(true);
   }, []);
+
+  // Auto-save the draft so a refresh or navigation never loses typing.
+  useEffect(() => {
+    try {
+      const hasContent = Object.values(formData).some((value) => value.trim());
+      if (hasContent) {
+        window.localStorage.setItem(DRAFT_KEY, JSON.stringify(formData));
+      } else {
+        window.localStorage.removeItem(DRAFT_KEY);
+      }
+    } catch {
+      // Storage can be unavailable (private mode) — drafts are best-effort.
+    }
+  }, [formData]);
 
   // Live countdown while the resubmit cooldown is active.
   useEffect(() => {
@@ -111,6 +160,7 @@ export const Contact = () => {
     setSubmitError(message);
     requestAnimationFrame(() => errorRef.current?.focus());
   };
+
 
   const validateAll = (): Errors => {
     const parsed = contactSchema.safeParse(formData);
@@ -154,7 +204,7 @@ export const Contact = () => {
       setSubmitError("");
       setSubmitSuccess("Thank you for reaching out. Your message has been sent.");
       toast({ title: "Message sent", description: "Thank you for reaching out." });
-      setFormData({ name: "", email: "", subject: "", message: "" });
+      setFormData(EMPTY_FORM);
       return;
     }
 
@@ -193,47 +243,72 @@ export const Contact = () => {
 
     setSubmitError("");
     setIsSubmitting(true);
+    setDraftRestored(false);
+
+    const reference = makeReference();
+    const submittedAt = new Date();
+    const subject = parsed.data.subject || "New message from your website";
+
+    /** Store the message so it is never lost, even if the email fails. */
+    const record = async (emailSent: boolean) => {
+      const { error: insertError } = await supabase.from("contact_submissions").insert({
+        reference_id: reference,
+        name: parsed.data.name,
+        email: parsed.data.email,
+        subject,
+        message: parsed.data.message,
+        email_sent: emailSent,
+      });
+      if (insertError) console.error("Contact submission not stored:", insertError);
+    };
 
     try {
       const { error } = await supabase.functions.invoke("send-transactional-email", {
         body: {
           templateName: "contact-message",
           recipientEmail: "haritholanrewaju@gmail.com",
-          idempotencyKey: `contact-${Date.now()}-${parsed.data.email}`,
+          idempotencyKey: `contact-${reference}`,
           templateData: {
             name: parsed.data.name,
             email: parsed.data.email,
-            subject: parsed.data.subject || "New message from your website",
+            subject,
             message: parsed.data.message,
+            reference,
           },
         },
       });
 
       if (error) throw error;
 
+      await record(true);
+
       window.localStorage.setItem(LAST_SENT_KEY, String(Date.now()));
+      window.localStorage.removeItem(DRAFT_KEY);
       setCooldownLeft(RESUBMIT_COOLDOWN_MS / 1000);
+      setReceipt({ reference, stamp: formatStamp(submittedAt) });
       setSubmitSuccess(
         "Thank you for reaching out. Your message has been sent — I'll reply within 24–48 hours.",
       );
       toast({
-        title: "Message sent",
+        title: `Message sent · ${reference}`,
         description: "Thank you for reaching out. I'll get back to you within 24–48 hours.",
       });
-      setFormData({ name: "", email: "", subject: "", message: "" });
+      setFormData(EMPTY_FORM);
       setTouched({});
       setSubmitAttempted(false);
       mountedAt.current = Date.now();
       requestAnimationFrame(() => statusRef.current?.focus());
     } catch (err) {
       console.error("Contact form send failed:", err);
+      await record(false);
+      setReceipt({ reference, stamp: formatStamp(submittedAt) });
 
       // Server-side rate limiting — surface the exact Retry-After wait time.
       const retryAfter = await readRetryAfter(err);
       if (retryAfter !== null) {
         setCooldownLeft(retryAfter);
         failWith(
-          `Too many messages sent. To protect against spam, please try again in ${retryAfter} second${retryAfter === 1 ? "" : "s"}. Your message has been kept.`,
+          `Too many messages sent. To protect against spam, the form is locked for ${retryAfter} second${retryAfter === 1 ? "" : "s"}. Your message has been kept.`,
         );
         return;
       }
@@ -247,9 +322,11 @@ export const Contact = () => {
     }
   };
 
+
   const messageLength = formData.message.length;
   const messageRemaining = MESSAGE_MAX - messageLength;
   const messageOverLimit = messageRemaining < 0;
+  const formLocked = cooldownLeft > 0;
 
   const fieldProps = (field: Field) => ({
     onBlur: () => handleBlur(field),
@@ -291,22 +368,32 @@ export const Contact = () => {
                 }
               >
                 {submitError && <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" aria-hidden="true" />}
-                <span>{submitError}</span>
+                <span>
+                  {submitError}
+                  {submitError && receipt && (
+                    <span className="mt-2 block font-normal">
+                      Reference <span className="font-mono font-semibold">{receipt.reference}</span> · {receipt.stamp}
+                    </span>
+                  )}
+                </span>
               </div>
 
-              {/* Polite countdown while the anti-spam cooldown is active */}
+              {/* Countdown while the anti-spam cooldown locks the form */}
               <div
                 role="status"
                 aria-live="polite"
                 className={
-                  cooldownLeft > 0
-                    ? "text-xs text-muted-foreground"
+                  formLocked
+                    ? "flex items-start gap-3 rounded-[var(--radius-button)] border border-border bg-secondary/60 p-4 text-sm"
                     : "sr-only"
                 }
               >
-                {cooldownLeft > 0
-                  ? `You can send another message in ${cooldownLeft} second${cooldownLeft === 1 ? "" : "s"}.`
-                  : ""}
+                {formLocked && <Clock className="w-5 h-5 shrink-0 mt-0.5" aria-hidden="true" />}
+                <span>
+                  {formLocked
+                    ? `Spam protection is active — the form is disabled for ${cooldownLeft} more second${cooldownLeft === 1 ? "" : "s"}.`
+                    : ""}
+                </span>
               </div>
 
 
@@ -323,9 +410,23 @@ export const Contact = () => {
                 }
               >
                 {submitSuccess && <CheckCircle className="w-5 h-5 shrink-0 mt-0.5 text-primary" aria-hidden="true" />}
-                <span>{submitSuccess}</span>
+                <span>
+                  {submitSuccess}
+                  {submitSuccess && receipt && (
+                    <span className="mt-2 block font-normal">
+                      Reference <span className="font-mono font-semibold">{receipt.reference}</span> · submitted {receipt.stamp}. Quote this reference in any follow-up.
+                    </span>
+                  )}
+                </span>
               </div>
 
+
+              {draftRestored && (
+                <p role="status" className="flex items-start gap-2 rounded-[var(--radius-button)] border border-border bg-secondary/50 p-3 text-xs text-muted-foreground">
+                  <Save className="w-4 h-4 mt-0.5 shrink-0" aria-hidden="true" />
+                  We restored your saved draft. Your inputs are auto-saved on this device until you send.
+                </p>
+              )}
 
               {/* Honeypot — hidden from users, visible to bots */}
               <div className="hidden" aria-hidden="true">
@@ -341,7 +442,7 @@ export const Contact = () => {
                 />
               </div>
 
-              <div className="space-y-4">
+              <fieldset disabled={isSubmitting || formLocked} className="space-y-4 m-0 p-0 border-0 disabled:opacity-60">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium mb-2">
                     Name <span aria-hidden="true">*</span>
@@ -462,12 +563,12 @@ export const Contact = () => {
                     </p>
                   )}
                 </div>
-              </div>
+              </fieldset>
 
               <Button
                 type="submit"
                 size="lg"
-                disabled={isSubmitting}
+                disabled={isSubmitting || formLocked}
                 aria-busy={isSubmitting}
                 className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
               >
@@ -476,6 +577,11 @@ export const Contact = () => {
                     <Loader2 className="mr-2 w-4 h-4 animate-spin" aria-hidden="true" />
                     Sending…
                   </>
+                ) : formLocked ? (
+                  <>
+                    <Clock className="mr-2 w-4 h-4" aria-hidden="true" />
+                    Available in {cooldownLeft}s
+                  </>
                 ) : (
                   <>
                     Send Message
@@ -483,6 +589,7 @@ export const Contact = () => {
                   </>
                 )}
               </Button>
+
 
               {/* Progress announcement kept separate from success/error messaging */}
               <div role="status" aria-live="polite" className="sr-only">

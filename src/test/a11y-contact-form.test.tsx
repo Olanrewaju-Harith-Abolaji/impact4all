@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
@@ -24,6 +24,10 @@ const renderContact = () => {
 };
 
 describe("Contact form accessibility", () => {
+  beforeEach(() => {
+    window.localStorage.clear();
+  });
+
   it("associates every input with a visible label", () => {
     const { name, email, message } = renderContact();
     expect(name()).toBeInTheDocument();

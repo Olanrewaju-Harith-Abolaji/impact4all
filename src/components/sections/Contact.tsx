@@ -417,7 +417,7 @@ export const Contact = () => {
                 />
               </div>
 
-              <div className="space-y-4">
+              <fieldset disabled={isSubmitting || formLocked} className="space-y-4 m-0 p-0 border-0 disabled:opacity-60">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium mb-2">
                     Name <span aria-hidden="true">*</span>

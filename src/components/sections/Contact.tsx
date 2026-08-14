@@ -538,12 +538,12 @@ export const Contact = () => {
                     </p>
                   )}
                 </div>
-              </div>
+              </fieldset>
 
               <Button
                 type="submit"
                 size="lg"
-                disabled={isSubmitting}
+                disabled={isSubmitting || formLocked}
                 aria-busy={isSubmitting}
                 className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
               >
@@ -552,6 +552,11 @@ export const Contact = () => {
                     <Loader2 className="mr-2 w-4 h-4 animate-spin" aria-hidden="true" />
                     Sending…
                   </>
+                ) : formLocked ? (
+                  <>
+                    <Clock className="mr-2 w-4 h-4" aria-hidden="true" />
+                    Available in {cooldownLeft}s
+                  </>
                 ) : (
                   <>
                     Send Message
@@ -559,6 +564,7 @@ export const Contact = () => {
                   </>
                 )}
               </Button>
+
 
               {/* Progress announcement kept separate from success/error messaging */}
               <div role="status" aria-live="polite" className="sr-only">

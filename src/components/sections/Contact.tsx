@@ -204,7 +204,7 @@ export const Contact = () => {
       setSubmitError("");
       setSubmitSuccess("Thank you for reaching out. Your message has been sent.");
       toast({ title: "Message sent", description: "Thank you for reaching out." });
-      setFormData({ name: "", email: "", subject: "", message: "" });
+      setFormData(EMPTY_FORM);
       return;
     }
 
@@ -243,47 +243,72 @@ export const Contact = () => {
 
     setSubmitError("");
     setIsSubmitting(true);
+    setDraftRestored(false);
+
+    const reference = makeReference();
+    const submittedAt = new Date();
+    const subject = parsed.data.subject || "New message from your website";
+
+    /** Store the message so it is never lost, even if the email fails. */
+    const record = async (emailSent: boolean) => {
+      const { error: insertError } = await supabase.from("contact_submissions").insert({
+        reference_id: reference,
+        name: parsed.data.name,
+        email: parsed.data.email,
+        subject,
+        message: parsed.data.message,
+        email_sent: emailSent,
+      });
+      if (insertError) console.error("Contact submission not stored:", insertError);
+    };
 
     try {
       const { error } = await supabase.functions.invoke("send-transactional-email", {
         body: {
           templateName: "contact-message",
           recipientEmail: "haritholanrewaju@gmail.com",
-          idempotencyKey: `contact-${Date.now()}-${parsed.data.email}`,
+          idempotencyKey: `contact-${reference}`,
           templateData: {
             name: parsed.data.name,
             email: parsed.data.email,
-            subject: parsed.data.subject || "New message from your website",
+            subject,
             message: parsed.data.message,
+            reference,
           },
         },
       });
 
       if (error) throw error;
 
+      await record(true);
+
       window.localStorage.setItem(LAST_SENT_KEY, String(Date.now()));
+      window.localStorage.removeItem(DRAFT_KEY);
       setCooldownLeft(RESUBMIT_COOLDOWN_MS / 1000);
+      setReceipt({ reference, stamp: formatStamp(submittedAt) });
       setSubmitSuccess(
         "Thank you for reaching out. Your message has been sent — I'll reply within 24–48 hours.",
       );
       toast({
-        title: "Message sent",
+        title: `Message sent · ${reference}`,
         description: "Thank you for reaching out. I'll get back to you within 24–48 hours.",
       });
-      setFormData({ name: "", email: "", subject: "", message: "" });
+      setFormData(EMPTY_FORM);
       setTouched({});
       setSubmitAttempted(false);
       mountedAt.current = Date.now();
       requestAnimationFrame(() => statusRef.current?.focus());
     } catch (err) {
       console.error("Contact form send failed:", err);
+      await record(false);
+      setReceipt({ reference, stamp: formatStamp(submittedAt) });
 
       // Server-side rate limiting — surface the exact Retry-After wait time.
       const retryAfter = await readRetryAfter(err);
       if (retryAfter !== null) {
         setCooldownLeft(retryAfter);
         failWith(
-          `Too many messages sent. To protect against spam, please try again in ${retryAfter} second${retryAfter === 1 ? "" : "s"}. Your message has been kept.`,
+          `Too many messages sent. To protect against spam, the form is locked for ${retryAfter} second${retryAfter === 1 ? "" : "s"}. Your message has been kept.`,
         );
         return;
       }
@@ -296,6 +321,7 @@ export const Contact = () => {
       setIsSubmitting(false);
     }
   };
+
 
   const messageLength = formData.message.length;
   const messageRemaining = MESSAGE_MAX - messageLength;

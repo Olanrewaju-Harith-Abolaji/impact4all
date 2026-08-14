@@ -109,12 +109,14 @@ const readRetryAfter = async (err: unknown): Promise<number | null> => {
 export const Contact = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
+  const [formData, setFormData] = useState(loadDraft);
   const [errors, setErrors] = useState<Errors>({});
   const [touched, setTouched] = useState<Touched>({});
   const [submitAttempted, setSubmitAttempted] = useState(false);
   const [submitError, setSubmitError] = useState<string>("");
   const [submitSuccess, setSubmitSuccess] = useState<string>("");
+  const [receipt, setReceipt] = useState<{ reference: string; stamp: string } | null>(null);
+  const [draftRestored, setDraftRestored] = useState(false);
   const [honeypot, setHoneypot] = useState("");
   const [cooldownLeft, setCooldownLeft] = useState(0);
   const mountedAt = useRef<number>(Date.now());
@@ -127,7 +129,23 @@ export const Contact = () => {
 
   useEffect(() => {
     mountedAt.current = Date.now();
+    const draft = loadDraft();
+    if (draft.name || draft.email || draft.subject || draft.message) setDraftRestored(true);
   }, []);
+
+  // Auto-save the draft so a refresh or navigation never loses typing.
+  useEffect(() => {
+    try {
+      const hasContent = Object.values(formData).some((value) => value.trim());
+      if (hasContent) {
+        window.localStorage.setItem(DRAFT_KEY, JSON.stringify(formData));
+      } else {
+        window.localStorage.removeItem(DRAFT_KEY);
+      }
+    } catch {
+      // Storage can be unavailable (private mode) — drafts are best-effort.
+    }
+  }, [formData]);
 
   // Live countdown while the resubmit cooldown is active.
   useEffect(() => {
@@ -142,6 +160,7 @@ export const Contact = () => {
     setSubmitError(message);
     requestAnimationFrame(() => errorRef.current?.focus());
   };
+
 
   const validateAll = (): Errors => {
     const parsed = contactSchema.safeParse(formData);

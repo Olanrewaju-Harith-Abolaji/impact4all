@@ -48,8 +48,39 @@ type Touched = Partial<Record<Field, boolean>>;
 const MIN_FILL_SECONDS = 3; // submissions faster than this are almost certainly bots
 const RESUBMIT_COOLDOWN_MS = 60_000;
 const LAST_SENT_KEY = "contact-last-sent";
+const DRAFT_KEY = "contact-draft";
 const MESSAGE_MAX = 2000;
 const MESSAGE_WARN_AT = 1800;
+
+const EMPTY_FORM = { name: "", email: "", subject: "", message: "" };
+
+/** Restore a previously auto-saved draft so refreshing never loses typing. */
+const loadDraft = (): typeof EMPTY_FORM => {
+  try {
+    const raw = window.localStorage.getItem(DRAFT_KEY);
+    if (!raw) return EMPTY_FORM;
+    const parsed = JSON.parse(raw);
+    return {
+      name: typeof parsed?.name === "string" ? parsed.name : "",
+      email: typeof parsed?.email === "string" ? parsed.email : "",
+      subject: typeof parsed?.subject === "string" ? parsed.subject : "",
+      message: typeof parsed?.message === "string" ? parsed.message : "",
+    };
+  } catch {
+    return EMPTY_FORM;
+  }
+};
+
+/** Human-readable submission reference, e.g. MSG-8QK3R-4F7A. */
+const makeReference = () => {
+  const stamp = Date.now().toString(36).toUpperCase();
+  const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
+  return `MSG-${stamp}-${rand}`;
+};
+
+const formatStamp = (date: Date) =>
+  date.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
+
 
 /** Pull a Retry-After value (seconds, or HTTP date) out of a failed function response. */
 const readRetryAfter = async (err: unknown): Promise<number | null> => {

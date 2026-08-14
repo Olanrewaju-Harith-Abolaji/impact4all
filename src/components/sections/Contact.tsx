@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Send, Mail, Github, Linkedin, MapPin, CheckCircle, MessageCircle, ShieldCheck, AlertCircle, Loader2 } from "lucide-react";
+import { Send, Mail, Github, Linkedin, MapPin, CheckCircle, MessageCircle, ShieldCheck, AlertCircle, Loader2, Clock, Save } from "lucide-react";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -326,6 +326,7 @@ export const Contact = () => {
   const messageLength = formData.message.length;
   const messageRemaining = MESSAGE_MAX - messageLength;
   const messageOverLimit = messageRemaining < 0;
+  const formLocked = cooldownLeft > 0;
 
   const fieldProps = (field: Field) => ({
     onBlur: () => handleBlur(field),
@@ -367,22 +368,32 @@ export const Contact = () => {
                 }
               >
                 {submitError && <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" aria-hidden="true" />}
-                <span>{submitError}</span>
+                <span>
+                  {submitError}
+                  {submitError && receipt && (
+                    <span className="mt-2 block font-normal">
+                      Reference <span className="font-mono font-semibold">{receipt.reference}</span> · {receipt.stamp}
+                    </span>
+                  )}
+                </span>
               </div>
 
-              {/* Polite countdown while the anti-spam cooldown is active */}
+              {/* Countdown while the anti-spam cooldown locks the form */}
               <div
                 role="status"
                 aria-live="polite"
                 className={
-                  cooldownLeft > 0
-                    ? "text-xs text-muted-foreground"
+                  formLocked
+                    ? "flex items-start gap-3 rounded-[var(--radius-button)] border border-border bg-secondary/60 p-4 text-sm"
                     : "sr-only"
                 }
               >
-                {cooldownLeft > 0
-                  ? `You can send another message in ${cooldownLeft} second${cooldownLeft === 1 ? "" : "s"}.`
-                  : ""}
+                {formLocked && <Clock className="w-5 h-5 shrink-0 mt-0.5" aria-hidden="true" />}
+                <span>
+                  {formLocked
+                    ? `Spam protection is active — the form is disabled for ${cooldownLeft} more second${cooldownLeft === 1 ? "" : "s"}.`
+                    : ""}
+                </span>
               </div>
 
 
@@ -399,9 +410,23 @@ export const Contact = () => {
                 }
               >
                 {submitSuccess && <CheckCircle className="w-5 h-5 shrink-0 mt-0.5 text-primary" aria-hidden="true" />}
-                <span>{submitSuccess}</span>
+                <span>
+                  {submitSuccess}
+                  {submitSuccess && receipt && (
+                    <span className="mt-2 block font-normal">
+                      Reference <span className="font-mono font-semibold">{receipt.reference}</span> · submitted {receipt.stamp}. Quote this reference in any follow-up.
+                    </span>
+                  )}
+                </span>
               </div>
 
+
+              {draftRestored && (
+                <p role="status" className="flex items-start gap-2 rounded-[var(--radius-button)] border border-border bg-secondary/50 p-3 text-xs text-muted-foreground">
+                  <Save className="w-4 h-4 mt-0.5 shrink-0" aria-hidden="true" />
+                  We restored your saved draft. Your inputs are auto-saved on this device until you send.
+                </p>
+              )}
 
               {/* Honeypot — hidden from users, visible to bots */}
               <div className="hidden" aria-hidden="true">

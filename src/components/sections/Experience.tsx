@@ -292,7 +292,7 @@ const ExperienceCard = ({ entry, compact }: { entry: Entry; compact?: boolean })
           <summary className="inline-flex min-h-[44px] cursor-pointer items-center text-[15px] font-medium text-primary">
             View details
           </summary>
-          <ul className="space-y-1.5 text-[15px] text-muted-foreground">
+          <ul className="mt-2 space-y-1.5 text-[15px] text-muted-foreground">
             {entry.points.map((p) => (
               <li key={p} className="flex gap-2">
                 <span aria-hidden="true" className="mt-2 h-1 w-1 shrink-0 rounded-full bg-primary" />

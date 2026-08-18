@@ -45,8 +45,7 @@ const groups: Group[] = [
           "Serving my national youth service year within a federal petroleum-sector regulator, where I apply data analysis, documentation and digital skills to unit-level work while gaining experience in a large public-sector institution.",
       },
       {
-        // Consolidated start date pending confirmation (July 2024 TechNexus vs January 2025 AccessEd Africa).
-        date: "2024 – Present",
+        date: "July 2024 – Present",
         role: "Co-founder / Team Lead",
         org: "AccessEd Africa, formerly TechNexus",
         category: "Programme Leadership",
@@ -199,7 +198,7 @@ const groups: Group[] = [
         category: "Community",
         current: true,
         description:
-          "Contribute to youth advocacy around equitable and non-discriminatory access to education.",
+          "Contribute to advocacy and reporting on the right to education, helping strengthen the evidence base for inclusion and access among marginalised populations across Africa.",
       },
       {
         date: "February 2026 – Present",
